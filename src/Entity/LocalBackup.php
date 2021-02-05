@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\BackupRepository;
+use App\Repository\LocalBackupRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=BackupRepository::class)
+ * @ORM\Entity(repositoryClass=LocalBackupRepository::class)
  */
-class Backup
+class LocalBackup
 {
     /**
      * @ORM\Id
@@ -18,14 +18,14 @@ class Backup
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $size;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
-    private $nbBookmarks;
+    private $filename;
 
     /**
      * @ORM\Column(type="datetime")
@@ -47,21 +47,21 @@ class Backup
         return $this->size;
     }
 
-    public function setSize(int $size): self
+    public function setSize(?int $size): self
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getNbBookmarks(): ?int
+    public function getFilename(): ?string
     {
-        return $this->nbBookmarks;
+        return $this->filename;
     }
 
-    public function setNbBookmarks(int $nbBookmarks): self
+    public function setFilename(string $filename): self
     {
-        $this->nbBookmarks = $nbBookmarks;
+        $this->filename = $filename;
 
         return $this;
     }

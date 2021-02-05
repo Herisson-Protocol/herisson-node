@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ScreenshotRepository;
+use App\Repository\OptionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=ScreenshotRepository::class)
+ * @ORM\Entity(repositoryClass=OptionRepository::class)
+ * @ORM\Table(name="`option`")
  */
-class Screenshot
+class Option
 {
     /**
      * @ORM\Id
@@ -23,9 +24,9 @@ class Screenshot
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=8096, nullable=true)
      */
-    private $fonction;
+    private $value;
 
     public function getId(): ?int
     {
@@ -44,14 +45,14 @@ class Screenshot
         return $this;
     }
 
-    public function getFonction(): ?string
+    public function getValue(): ?string
     {
-        return $this->fonction;
+        return $this->value;
     }
 
-    public function setFonction(string $fonction): self
+    public function setValue(?string $value): self
     {
-        $this->fonction = $fonction;
+        $this->value = $value;
 
         return $this;
     }
