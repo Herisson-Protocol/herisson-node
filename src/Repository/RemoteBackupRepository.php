@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Backup;
+use App\Entity\RemoteBackup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Backup|null find($id, $lockMode = null, $lockVersion = null)
- * @method Backup|null findOneBy(array $criteria, array $orderBy = null)
- * @method Backup[]    findAll()
- * @method Backup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method RemoteBackup|null find($id, $lockMode = null, $lockVersion = null)
+ * @method RemoteBackup|null findOneBy(array $criteria, array $orderBy = null)
+ * @method RemoteBackup[]    findAll()
+ * @method RemoteBackup[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class BackupRepository extends ServiceEntityRepository
+class RemoteBackupRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Backup::class);
+        parent::__construct($registry, RemoteBackup::class);
     }
 
     // /**
-    //  * @return Backup[] Returns an array of Backup objects
+    //  * @return RemoteBackup[] Returns an array of RemoteBackup objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class BackupRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Backup
+    public function findOneBySomeField($value): ?RemoteBackup
     {
         return $this->createQueryBuilder('b')
             ->andWhere('b.exampleField = :val')

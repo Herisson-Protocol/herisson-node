@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Screenshot;
+use App\Entity\Screenshoter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Screenshot|null find($id, $lockMode = null, $lockVersion = null)
- * @method Screenshot|null findOneBy(array $criteria, array $orderBy = null)
- * @method Screenshot[]    findAll()
- * @method Screenshot[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Screenshoter|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Screenshoter|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Screenshoter[]    findAll()
+ * @method Screenshoter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ScreenshotRepository extends ServiceEntityRepository
+class ScreenshoterRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Screenshot::class);
+        parent::__construct($registry, Screenshoter::class);
     }
 
     // /**
-    //  * @return Screenshot[] Returns an array of Screenshot objects
+    //  * @return Screenshoter[] Returns an array of Screenshoter objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class ScreenshotRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Screenshot
+    public function findOneBySomeField($value): ?Screenshoter
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.exampleField = :val')

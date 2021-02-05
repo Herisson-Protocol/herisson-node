@@ -10,9 +10,6 @@
 
 <div class="example-wrapper">
 
-    {% for bookmark in bookmarks %}
-        {{ bookmark.title }}
-    {% endfor %}
         <div id="search">
             <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="get">
                 Recherche <input type="text" name="search" value="" /><input type="submit" value="OK"/>

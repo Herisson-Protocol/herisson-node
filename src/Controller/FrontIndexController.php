@@ -7,15 +7,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\BookmarkRepository;
 use App\Entity\Bookmark;
+use App\Service\OptionLoader;
 
 class FrontIndexController extends AbstractController
 {
+
+    public $optionLoader;
+
+    public function __construct(OptionLoader $optionLoader)
+    {
+        $this->optionLoader = $optionLoader;
+    }
     /**
      * Action to display homepage of Herisson site
      *
      * @Route("/front/index/", name="front_index")
      */
-    public function index(BookmarkRepository $bookmarkRepository): Response
+    public function indexAction(BookmarkRepository $bookmarkRepository): Response
     {
 
         if ($tag = false) {
@@ -25,6 +33,8 @@ class FrontIndexController extends AbstractController
         } else {
         }
         $bookmarks = $bookmarkRepository->findAll();
+
+
 
         //$this->view->title = $this->options['sitename'];
 
@@ -36,7 +46,7 @@ class FrontIndexController extends AbstractController
         }
          */
 
-        return $this->render('front_index/index.html.twig', [
+        return $this->render('front/index.html.twig', [
             'controller_name' => 'FrontIndexController',
             'bookmarks' => $bookmarks,
             'sitename' => 'Wilkins',
@@ -240,15 +250,19 @@ class FrontIndexController extends AbstractController
      * This is mandatory for Herisson protocol
      * Outputs JSON
      *
+     * @Route("/front/info/", name="front_info")
      * @return void
      */
-    function infoAction()
+    function infoAction(OptionLoader $optionLoader) : Response
     {
-        $this->view->infos = array(
-            'sitename'   => $this->options['sitename'],
-            'adminEmail' => $this->options['adminEmail'],
-            'version' => HERISSON_VERSION,
-        );
+        $visibleOptions = ['sitename', 'adminEmail', 'version', 'protocol-version'];
+
+        $options = $optionLoader->load($visibleOptions);
+
+        return $this->render('front/info.html.twig', [
+            'controller_name' => 'FrontIndexController',
+            'options' => json_encode($options),
+        ]);
     }
 
 
