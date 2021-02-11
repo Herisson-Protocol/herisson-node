@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service;
+namespace Herisson\Service;
 
-use App\Repository\OptionRepository;
+use Herisson\Repository\OptionRepository;
 
 class OptionLoader
 {

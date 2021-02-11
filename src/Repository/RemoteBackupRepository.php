@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace Herisson\Repository;
 
-use App\Entity\RemoteBackup;
+use Herisson\Entity\RemoteBackup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +47,61 @@ class RemoteBackupRepository extends ServiceEntityRepository
         ;
     }
     */
+    /**
+     * Get the Backup match the id
+     *
+     * @param integer $backupId the id of the backup
+     *
+     * @return the matching Backup or new one
+     */
+    public static function get($backupId)
+    {
+        if (!is_numeric($backupId)) {
+            return new Backup();
+        }
+        return self::getOneWhere("id=?", array($backupId));
+    }
+
+    /**
+     * Get a Backups lit with where condition
+     *
+     * @param string $where the sql condition
+     * @param array  $data  the value parameters
+     *
+     * @return an array of matching Backup
+     */
+    public static function getWhere($where, $data=array())
+    {
+        $pagination = Pagination::i()->getVars();
+        $backups = Doctrine_Query::create()
+            ->from('Herisson\Entity\Backup')
+            ->where($where)
+            ->limit($pagination['limit'])
+            ->offset($pagination['offset'])
+            ->execute($data);
+        return $backups;
+    }
+
+
+    /**
+     * Get one item with where paremeters
+     *
+     * @param string $where the sql condition
+     * @param array  $data  the value parameters
+     *
+     * @return the corresponding instance of Backup or a new one
+     */
+    public static function getOneWhere($where, $data=array())
+    {
+        $backups = Doctrine_Query::create()
+            ->from('Herisson\Entity\Backup')
+            ->where($where)
+            ->limit(1)
+            ->execute($data);
+        foreach ($backups as $backup) {
+            return $backup;
+        }
+        return new Backup();
+    }
+
 }

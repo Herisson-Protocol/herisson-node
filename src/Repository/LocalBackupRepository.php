@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace Herisson\Repository;
 
-use App\Entity\LocalBackup;
+use Herisson\Entity\LocalBackup;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +47,60 @@ class LocalBackupRepository extends ServiceEntityRepository
         ;
     }
     */
+    /**
+     * Get the Localbackup match the id
+     *
+     * @param integer $backupId the id of the backup
+     *
+     * @return the matching Localbackup or new one
+     */
+    public static function get($backupId)
+    {
+        if (!is_numeric($backupId)) {
+            return new Localbackup();
+        }
+        return self::getOneWhere("id=?", array($backupId));
+    }
+
+    /**
+     * Get a Localbackups lit with where condition
+     *
+     * @param string $where the sql condition
+     * @param array  $data  the value parameters
+     *
+     * @return an array of matching Localbackup
+     */
+    public static function getWhere($where, $data=array())
+    {
+        $pagination = Pagination::i()->getVars();
+        $backups = Doctrine_Query::create()
+            ->from('Herisson\Entity\Localbackup')
+            ->where($where)
+            ->limit($pagination['limit'])
+            ->offset($pagination['offset'])
+            ->execute($data);
+        return $backups;
+    }
+
+
+    /**
+     * Get one item with where paremeters
+     *
+     * @param string $where the sql condition
+     * @param array  $data  the value parameters
+     *
+     * @return the corresponding instance of Localbackup or a new one
+     */
+    public static function getOneWhere($where, $data=array())
+    {
+        $backups = Doctrine_Query::create()
+            ->from('Herisson\Entity\Localbackup')
+            ->where($where)
+            ->limit(1)
+            ->execute($data);
+        foreach ($backups as $backup) {
+            return $backup;
+        }
+        return new Localbackup();
+    }
 }

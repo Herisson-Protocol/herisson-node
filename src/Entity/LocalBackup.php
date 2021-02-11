@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace Herisson\Entity;
 
-use App\Repository\LocalBackupRepository;
+use Herisson\Repository\LocalBackupRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

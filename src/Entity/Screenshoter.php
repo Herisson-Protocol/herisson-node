@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace Herisson\Entity;
 
-use App\Repository\ScreenshoterRepository;
+use Herisson\Repository\ScreenshoterRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

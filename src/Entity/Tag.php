@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace Herisson\Entity;
 
-use App\Repository\TagRepository;
+use Herisson\Repository\TagRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

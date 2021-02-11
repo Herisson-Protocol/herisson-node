@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace Herisson\Entity;
 
-use App\Repository\RemoteBackupRepository;
+use Herisson\Repository\RemoteBackupRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

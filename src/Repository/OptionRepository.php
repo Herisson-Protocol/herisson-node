@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace Herisson\Repository;
 
-use App\Entity\Option;
+use Herisson\Entity\Option;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

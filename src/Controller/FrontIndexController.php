@@ -1,35 +1,42 @@
 <?php
 
-namespace App\Controller;
+namespace Herisson\Controller;
 
+use Herisson\Entity\Friend;
+use Herisson\Service\Encryption;
+use Herisson\Service\Network;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\BookmarkRepository;
-use App\Entity\Bookmark;
-use App\Service\OptionLoader;
+use Herisson\Repository\BookmarkRepository;
+use Herisson\Service\OptionLoader;
+use Herisson\Network\Protocol\Exception as ProtocolException;
+use Herisson\Encryption\Exception as EncryptionException;
 
 class FrontIndexController extends AbstractController
 {
 
     public $optionLoader;
+    public $encryptionService;
 
-    public function __construct(OptionLoader $optionLoader)
+    public function __construct(OptionLoader $optionLoader, Encryption $encryptionService)
     {
         $this->optionLoader = $optionLoader;
+        $this->encryptionService = $encryptionService;
     }
     /**
      * Action to display homepage of Herisson site
      *
-     * @Route("/front/index/", name="front_index")
+     * @Route("/front/index/", name="front.index")
      */
     public function indexAction(BookmarkRepository $bookmarkRepository): Response
     {
 
         if ($tag = false) {
-            $bookmarks = WpHerissonBookmarksTable::getTag(array($tag),true);
+            $bookmarks = BookmarkRepository::getTag(array($tag),true);
         } else if ($search = false) {
-            $bookmarks = WpHerissonBookmarksTable::getSearch($search,true);
+            $bookmarks = BookmarkRepository::getSearch($search,true);
         } else {
         }
         $bookmarks = $bookmarkRepository->findAll();
@@ -39,7 +46,7 @@ class FrontIndexController extends AbstractController
         //$this->view->title = $this->options['sitename'];
 
         /*
-        $this->view->friends = WpHerissonFriendsTable::getWhere("is_active=1");
+        $this->view->friends = FriendRepository::getWhere("is_active=1");
         foreach ($this->view->friends as $friendId => $friend) {
             $this->view->friendBookmarks[$friend->id] = $friend->retrieveBookmarks($_GET);
 
@@ -91,9 +98,9 @@ class FrontIndexController extends AbstractController
         $backupData = post('backupData');
         //error_log($backupData);
 
-        $friend = WpHerissonFriendsTable::getOneWhere("url=?", array($url));
+        $friend = FriendRepository::getOneWhere("url=?", array($url));
         try {
-            if (Encryption::i()->publicDecrypt($signature, $friend->public_key) == $url) {
+            if ($this->encryptionService->publicDecrypt($signature, $friend->public_key) == $url) {
 
                 // Save the file in backup folder
                 $filename = hash('md5', $backupData).".data";
@@ -101,7 +108,7 @@ class FrontIndexController extends AbstractController
                 file_put_contents($fullfilename, $backupData);
                 
                 // Insert localbackup into
-                $backup            = new WpHerissonLocalbackups();
+                $backup            = new Localbackup();
                 $backup->friend_id = $friend->id;
                 $backup->size      = strlen($backupData);
                 $backup->filename  = $fullfilename;
@@ -114,7 +121,7 @@ class FrontIndexController extends AbstractController
             } else {
                 Network::reply(417, HERISSON_EXIT);
             }
-        } catch (Encryption\Exception $e) {
+        } catch (EncryptionException $e) {
             Network::reply(417, HERISSON_EXIT);
 
         }
@@ -136,17 +143,17 @@ class FrontIndexController extends AbstractController
         $signature  = post('signature');
         $url        = post('url');
 
-        $friend = WpHerissonFriendsTable::getOneWhere("url=?", array($url));
+        $friend = FriendRepository::getOneWhere("url=?", array($url));
         try {
-            if (Encryption::i()->publicDecrypt($signature, $friend->public_key) == $url) {
+            if ($this->encryptionService->publicDecrypt($signature, $friend->public_key) == $url) {
 
-                $backup = WpHerissonLocalbackupsTable::getOneWhere('friend_id=?', array($friend->id));
+                $backup = LocalbackupRepository::getOneWhere('friend_id=?', array($friend->id));
                 Export::forceDownload($backup->filename, 'herisson.data');
 
             } else {
                 Network::reply(417, HERISSON_EXIT);
             }
-        } catch (Encryption\Exception $e) {
+        } catch (EncryptionException $e) {
             Network::reply(417, HERISSON_EXIT);
 
         }
@@ -185,29 +192,35 @@ class FrontIndexController extends AbstractController
      *
      * TODO: Handle Network replies as Exceptions
      *
+     * @Route("/front/ask/", name="front.ask")
+     *
      * @return void
      */
-    function askAction()
+    function askAction(Request $request)
     {
-
-        if ($this->options['acceptFriends'] == 0) {
-            Network::reply(403, HERISSON_EXIT);
+        $options = $this->optionLoader->load(['acceptFriends']);
+        if ($options['acceptFriends'] == 0) {
+            throw new ProtocolException(403);
+            //Network::reply(403, HERISSON_EXIT);
         }
-        $signature = post('signature');
-        $f = new WpHerissonFriends();
-        $f->url = post('url');
+        dump($request);
+        $signature = $request->request->get('signature');
+        $url = $request->request->get('url');
+        $url = 'http://localhost:8001';
+        $f = new Friend();
+        $f->setUrl($url);
         $f->reloadPublicKey();
-        if (Encryption::i()->publicDecrypt($signature, $f->public_key) == $f->url) {
+        if ($this->encryptionService->publicDecrypt($signature, $f->getPublicKey()) == $f->getUrl()) {
             $f->getInfo();
-            if ($this->options['acceptFriends'] == 2) {
+            if ($options['acceptFriends'] == 2) {
                 // Friend automatically accepted, so it's a 202 Accepted for further process response
                 Network::reply(202);
-                $f->is_active=1;
+                $f->setIsActive(true);
             } else {
                 // Friend request need to be manually processed, so it's a 200 Ok response
                 Network::reply(200);
-                $f->b_wantsyou=1;
-                $f->is_active=0;
+                $f->setIsWantsyou(true);
+                $f->setIsActive(false);
             }
             $f->save();
         } else {
@@ -229,16 +242,16 @@ class FrontIndexController extends AbstractController
     {
 
         if (!is_numeric($id)) {
-            return new WpHerissonBookmarks();
+            return new Bookmark();
         }
         $bookmarks = Doctrine_Query::create()
-            ->from('WpHerissonBookmarks')
+            ->from('Bookmark')
             ->where("id=$id")
             ->execute();
         foreach ($bookmarks as $bookmark) {
             return $bookmark;
         }
-        return new WpHerissonBookmarks();
+        return new Bookmark();
     }
     */
 
@@ -250,14 +263,14 @@ class FrontIndexController extends AbstractController
      * This is mandatory for Herisson protocol
      * Outputs JSON
      *
-     * @Route("/front/info/", name="front_info")
+     * @Route("/front/info/", name="front.info")
      * @return void
      */
-    function infoAction(OptionLoader $optionLoader) : Response
+    function infoAction() : Response
     {
         $visibleOptions = ['sitename', 'adminEmail', 'version', 'protocol-version'];
 
-        $options = $optionLoader->load($visibleOptions);
+        $options = $this->optionLoader->load($visibleOptions);
 
         return $this->render('front/info.html.twig', [
             'controller_name' => 'FrontIndexController',
@@ -271,12 +284,19 @@ class FrontIndexController extends AbstractController
      *
      * This is mandatory for Herisson protocol
      * Outputs Text
-     *
+     * @Route("/publickey", name="front.publicKey")
      * @return void
      */
     function publicKeyAction()
     {
-        echo $this->options['publicKey'];
+        $visibleOptions = ['publicKey'];
+
+        $options = $this->optionLoader->load($visibleOptions);
+
+        return $this->render('front/publicKey.html.twig', [
+            'controller_name' => 'FrontIndexController',
+            'options' => $options,
+        ]);
     }
 
 
@@ -285,7 +305,7 @@ class FrontIndexController extends AbstractController
      *
      * This methods check the given publickey
      * Outputs JSON
-     *
+     * @Route("/front/retrieve", name="front.retrieve")
      * @return void
      */
     function retrieveAction()
@@ -294,7 +314,7 @@ class FrontIndexController extends AbstractController
             exit;
         }
         $key = post('key');
-        $friends = WpHerissonFriendsTable::getWhere("public_key=?", array($key));
+        $friends = FriendRepository::getWhere("public_key=?", array($key));
         foreach ($friends as $friend) {
             echo $friend->generateBookmarksData($_POST);
             // Exit au cas ou le friend est présent plusieurs fois
@@ -316,9 +336,9 @@ class FrontIndexController extends AbstractController
         $signature = post('signature');
         $url = post('url');
 
-        $f = WpHerissonFriendsTable::getOneWhere("url=? AND b_youwant=1", array($url));
+        $f = FriendRepository::getOneWhere("url=? AND b_youwant=1", array($url));
         try {
-            if (Encryption::i()->publicDecrypt($signature, $f->public_key) == $url) {
+            if ($this->encryptionService->publicDecrypt($signature, $f->public_key) == $url) {
                 $f->b_youwant=0;
                 $f->is_active=1;
                 $f->save();
@@ -328,7 +348,7 @@ class FrontIndexController extends AbstractController
             } else {
                 Network::reply(417, HERISSON_EXIT);
             }
-        } catch (Encryption\Exception $e) {
+        } catch (EncryptionException $e) {
             Network::reply(417, HERISSON_EXIT);
 
         }

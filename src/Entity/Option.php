@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace Herisson\Entity;
 
-use App\Repository\OptionRepository;
+use Herisson\Repository\OptionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

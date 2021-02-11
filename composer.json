@@ -47,7 +47,11 @@
         "symfony/web-link": "5.2.*",
         "symfony/yaml": "5.2.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-mcrypt": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "symfony/browser-kit": "^5.2",
@@ -68,12 +72,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "Herisson\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "Herisson\\Tests\\": "tests/"
         }
     },
     "replace": {

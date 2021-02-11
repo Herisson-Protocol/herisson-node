@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace Herisson\Repository;
 
-use App\Entity\Tag;
+use Herisson\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +47,18 @@ class TagRepository extends ServiceEntityRepository
         ;
     }
     */
+    /**
+     * Get all tags from database
+     *
+     * @return the list of all tags with their count
+     */
+    public static function getAll()
+    {
+        return Doctrine_Query::create()
+            ->select('count(*) as c, name')
+            ->from('Tag')
+            ->groupby('name')
+            ->orderby('name')
+            ->execute();
+    }
 }

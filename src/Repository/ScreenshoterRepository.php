@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repository;
+namespace Herisson\Repository;
 
-use App\Entity\Screenshoter;
+use Herisson\Entity\Screenshoter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +47,40 @@ class ScreenshoterRepository extends ServiceEntityRepository
         ;
     }
     */
+    /**
+     * Get all screenshots tools
+     *
+     * @return array the list of screenshots tools
+     */
+    public static function getAll()
+    {
+        $screenshots = Doctrine_Query::create()
+            ->from('Herisson\Entity\Screenshot')
+            ->orderby("id")
+            ->execute();
+        return $screenshots;
+    }
+
+    /**
+     * Get one screenshots tool from id
+     *
+     * @param integer $id the id of the screenshot tool
+     *
+     * @return mixed the screenshot tool object
+     */
+    public static function get($id)
+    {
+        if (!is_numeric($id)) {
+            return new Screenshot();
+        }
+        $screenshots = Doctrine_Query::create()
+            ->from('Herisson\Entity\Screenshot')
+            ->where("id=?")
+            ->execute(array($id));
+        foreach ($screenshots as $screenshot) {
+            return $screenshot;
+        }
+        return new Screenshot();
+    }
+
 }
