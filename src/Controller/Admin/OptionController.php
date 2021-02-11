@@ -1,14 +1,4 @@
 <?php
-/**
- * Option controller 
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
 
 namespace Herisson\Controller\Admin;
 
@@ -16,19 +6,10 @@ use Herisson\Repository\Screenshot;
 use Herisson\Encryption;
 use Herisson\Shell;
 use Herisson\Message;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-/**
- * Class: Herisson\Controller\Admin\Option
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
-class Option extends \Herisson\Controller\Admin
+class OptionController extends AbstractController
 {
 
     /**

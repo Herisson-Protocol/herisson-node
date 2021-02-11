@@ -1,31 +1,13 @@
 <?php
-/**
- * Herisson Format extension
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
 
 namespace Herisson\Format;
 
 use Herisson\Export;
 use Herisson\Entity\Bookmark;
+use Herisson\Format;
 
-/**
- * Class to handle complete Herisson JSON bookmarks format
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     https://github.com/Rivsen/firefox-json-boomark-read
- * @see      None
- */
-class Herisson extends \Herisson\Format
+
+class Herisson extends Format
 {
 
     /**

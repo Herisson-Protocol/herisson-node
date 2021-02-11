@@ -1,30 +1,12 @@
 <?php
-/**
- * Friend Format extension
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
 
 namespace Herisson\Format;
 
-use Herisson\Repository\Friend;
+use Herisson\Repository\FriendRepository;
+use Herisson\Format;
 
-/**
- * Class to handle Friend bookmarks transfer
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
-class Friend extends \Herisson\Format
+
+class Friend extends Format
 {
 
     /**

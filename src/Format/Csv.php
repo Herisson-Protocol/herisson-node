@@ -1,31 +1,13 @@
 <?php
-/**
- * CSV Format extension
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
 
 namespace Herisson\Format;
 
 use Herisson\Entity\Bookmark;
 use Herisson\Export;
+use Herisson\Format;
 
-/**
- * Class to handle Basic CSV format
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
-class Csv extends \Herisson\Format
+
+class Csv extends Format
 {
 
     /**

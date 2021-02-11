@@ -1,45 +1,18 @@
 <?php
-/**
- * Friend controller 
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
 
 namespace Herisson\Controller\Admin;
 
 
-use Herisson\Message;
-use Herisson\Repository\Friend;
+use Herisson\Service\Message;
+use Herisson\Repository\FriendRepository;
 use Herisson\Entity\Friend;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-/**
- * Class: Herisson\Controller\Admin\Friend
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
-class Friend extends \Herisson\Controller\Admin
+
+class FriendController extends AbstractController
 {
 
-    /**
-     * Constructor
-     *
-     * Sets controller's name
-     */
-    function __construct()
-    {
-        $this->name = "friend";
-        parent::__construct();
-    }
+
 
     /**
      * Action to add a new friend

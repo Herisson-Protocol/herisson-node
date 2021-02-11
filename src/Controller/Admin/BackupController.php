@@ -15,36 +15,17 @@ namespace Herisson\Controller\Admin;
 use Doctrine_Query;
 use Herisson\Doctrine;
 use Herisson\Export;
-use Herisson\Message;
-use Herisson\Entity\Backup;
-use Herisson\Repository\Backup;
-use Herisson\Repository\Bookmark;
-use Herisson\Repository\Friend;
+use Herisson\Service\Message;
+use Herisson\Entity\RemoteBackup;
+use Herisson\Repository\RemoteBackupRepository;
+use Herisson\Repository\BookmarkRepository;
+use Herisson\Repository\FriendRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-/**
- * Class: HerissonControllerAdminBackup
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
-class Backup extends \Herisson\Controller\Admin
+class BackupController extends AbstractController
 {
 
-    /**
-     * Constructor
-     *
-     * Sets controller's name
-     */
-    function __construct()
-    {
-        $this->name = "backup";
-        parent::__construct();
-    }
 
 
     /**
@@ -90,7 +71,7 @@ class Backup extends \Herisson\Controller\Admin
         //echo $res;
         if ($res) {
             // TODO : Delete backups from that friend before adding a new one
-            $backup            = new Backup();
+            $backup            = new RemoteBackup();
             $backup->friend_id = $friend->id;
             $backup->size      = strlen($herissonBookmarks);
             $backup->nb        = sizeof($bookmarks);

@@ -1,32 +1,16 @@
 <?php
-/**
- * HTML Format extension
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
 
 namespace Herisson\Format;
 
 use Herisson\Export;
+use Herisson\Format;
+
 
 /**
- * Class to handle Firefox HTML bookmarks format
- * See HTML file format in the @link parameter
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     http://msdn.microsoft.com/en-us/library/aa753582%28VS.85%29.aspx
- * @link     https://support.mozilla.org/fr/kb/exporter-marque-pages-firefox-fichier-html
- * @see      None
+ * @see     http://msdn.microsoft.com/en-us/library/aa753582%28VS.85%29.aspx
+ * @see     https://support.mozilla.org/fr/kb/exporter-marque-pages-firefox-fichier-html
  */
-class FirefoxHtml extends \Herisson\Format
+class FirefoxHtml extends Format
 {
 
     /**

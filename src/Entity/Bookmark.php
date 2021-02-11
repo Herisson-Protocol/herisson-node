@@ -97,12 +97,7 @@ class Bookmark
         return $this->url;
     }
 
-    public function setUrl(string $url): self
-    {
-        $this->url = $url;
 
-        return $this;
-    }
 
     public function getHash(): ?string
     {
@@ -281,11 +276,11 @@ class Bookmark
     {
 
         if (!isset($fields['url'])) {
-            throw new Exception("Missing Url. Can't create bookmark"));
+            throw new Exception("Missing Url. Can't create bookmark");
         }
         $url = $fields['url'];
         if (BookmarkRepository::checkDuplicate($url)) {
-            throw new Exception("Ignoring duplicate entry : $url"));
+            throw new Exception("Ignoring duplicate entry : $url");
         }
         $bookmark = new Bookmark();
         $bookmark->setProperties($fields);
@@ -305,13 +300,15 @@ class Bookmark
      *
      * @return void
      */
-    public function setUrl($url)
+    public function setUrl(string $url): self
     {
-        parent::_set('url', $url);
+        $this->url = $url;
         $this->setHashFromUrl();
         // $this->checkUrl();
-    }
 
+        return $this;
+
+    }
 
     /**
      * Check the bookmark url, and set the error attribute if the bookmark doesn't exists anymore

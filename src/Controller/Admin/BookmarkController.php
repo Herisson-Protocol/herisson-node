@@ -1,46 +1,17 @@
 <?php
-/**
- * Bookmark controller 
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
 
 namespace Herisson\Controller\Admin;
 
-use Herisson\Repository\Bookmark;
+use Herisson\Repository\BookmarkRepository;
 use Herisson\Entity\Bookmark;
-use Herisson\Repository\Tag;
+use Herisson\Repository\TagRepository;
 use Herisson\Pagination;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-/**
- * Class: HerissonControllerAdminBookmark
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
-class Bookmark extends \Herisson\Controller\Admin
+
+class BookmarkController extends AbstractController
 {
-
-    /**
-     * Constructor
-     *
-     * Sets controller's name
-     */
-    function __construct()
-    {
-        $this->name = "bookmark";
-        parent::__construct();
-    }
 
     /**
      * Action to add a new bookmark
@@ -144,7 +115,7 @@ class Bookmark extends \Herisson\Controller\Admin
     {
         $tag = get('tag');
         if ($tag) {
-            $this->view->subtitle = "Results for tag &laquo;&nbsp;".esc_html($tag)."&nbsp;&raquo;");
+            $this->view->subtitle = "Results for tag &laquo;&nbsp;".esc_html($tag)."&nbsp;&raquo;";
             $this->view->countAll = sizeof(BookmarkRepository::getTag($tag));
             $this->view->bookmarks = BookmarkRepository::getTag($tag, true);
         } else {
@@ -175,7 +146,7 @@ class Bookmark extends \Herisson\Controller\Admin
         $search = get('search');
         $this->view->bookmarks = BookmarkRepository::getSearch($search, true);
         $this->view->countAll = sizeof(BookmarkRepository::getSearch($search));
-        $this->view->subtitle = "Search results for &laquo;&nbsp;".esc_html($search)."&nbsp;&raquo;");
+        $this->view->subtitle = "Search results for &laquo;&nbsp;".esc_html($search)."&nbsp;&raquo;";
         $this->view->pagination = Pagination::i()->getVars();
         $this->setView('index');
     }

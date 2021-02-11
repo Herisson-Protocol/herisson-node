@@ -1,28 +1,11 @@
 <?php
-/**
- * Delicious Format extension
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
 
 namespace Herisson\Format;
 
-/**
- * Class to handle Basic Delicious format
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      None
- */
-class Delicious extends \Herisson\Format
+
+use Herisson\Format;
+
+class Delicious extends Format
 {
 
     /**

@@ -1,44 +1,16 @@
 <?php
-/**
- * Maintenance controller 
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
+
 
 namespace Herisson\Controller\Admin;
 
-use Herisson\Repository\Bookmark;
+use Herisson\Repository\BookmarkRepository;
 use Herisson\Entity\Bookmark;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-/**
- * Class: Herisson\Controller\Admin\Maintenance
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
-class Maintenance extends \Herisson\Controller\Admin
+class MaintenanceController extends AbstractController
 {
 
-    /**
-     * Constructor
-     *
-     * Sets controller's name
-     */
-    function __construct()
-    {
-        $this->name = "maintenance";
-        parent::__construct();
-    }
 
 
     /**

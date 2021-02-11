@@ -1,48 +1,19 @@
 <?php
-/**
- * Import controller 
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
 
 namespace Herisson\Controller\Admin;
 
 use Herisson\Entity\Bookmark;
-use Herisson\Repository\Bookmark;
+use Herisson\Repository\BookmarkRepository;
 
 use Herisson\Format;
-use Herisson\Message;
+use Herisson\Service\Message;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
-/**
- * Class: Herisson\Controller\Admin\Import
- *
- * @category Controller
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- * @see      HerissonControllerAdmin
- */
-class Import extends \Herisson\Controller\Admin
+class ImportController extends AbstractController
 {
 
 
-    /**
-     * Constructor
-     *
-     * Sets controller's name
-     */
-    function __construct()
-    {
-        $this->name = "import";
-        parent::__construct();
-    }
 
 
     /**
