@@ -1,0 +1,3 @@
+# https://symfony.com/doc/current/bundles/SymfonyMakerBundle/index.html#configuration
+maker:  
+    root_namespace: 'Herisson'

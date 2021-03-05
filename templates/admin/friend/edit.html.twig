@@ -1,0 +1,52 @@
+{% extends "base.html.twig" %}
+{% block title "Friend edit" %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <h1>{{ friend.alias }}</h1>
+    <div class="container mt-8">
+        <div class="row">
+            <div class="col-md-2">Alias</div>
+            <div class="col-md-10">{{ form_widget(form.alias) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">URL</div>
+            <div class="col-md-4">
+                <!-- {{ form_widget(form.url) }}-->
+                {{ include('mixins/_badge_boolean.html.twig', {value:form.vars.data.url }) }}
+                {# form_widget(form.url) #}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Name</div>
+            <div class="col-md-2">{{ form.vars.data.name }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Email</div>
+            <div class="col-md-2">{{ form.vars.data.email }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2">You want it</div>
+            <div class="col-md-2">{{ include('mixins/_badge_boolean.html.twig', {value:form.vars.data.isYouwant }) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Wants you</div>
+            <div class="col-md-2">{{ include('mixins/_badge_boolean.html.twig', {value:form.vars.data.isWantsyou }) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Is active</div>
+            <div class="col-md-2">{{ include('mixins/_badge_boolean.html.twig', {value:form.vars.data.isActive }) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">Public Key</div>
+            <div class="col-md-8">{{ include('mixins/_badge_boolean.html.twig', {value:form.vars.data.publicKey }) }}</div>
+        </div>
+
+        <button class="btn btn-primary">Save</button>
+    </div>
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+
+{% endblock %}

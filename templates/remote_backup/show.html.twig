@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RemoteBackup{% endblock %}
+
+{% block body %}
+    <h1>RemoteBackup</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ remote_backup.id }}</td>
+            </tr>
+            <tr>
+                <th>Size</th>
+                <td>{{ remote_backup.size }}</td>
+            </tr>
+            <tr>
+                <th>NbBookmarks</th>
+                <td>{{ remote_backup.nbBookmarks }}</td>
+            </tr>
+            <tr>
+                <th>Created_at</th>
+                <td>{{ remote_backup.createdAt ? remote_backup.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Friend_id</th>
+                <td>{{ remote_backup.friendId }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('remote_backup_index') }}">back to list</a>
+
+    <a href="{{ path('remote_backup_edit', {'id': remote_backup.id}) }}">edit</a>
+
+    {{ include('remote_backup/_delete_form.html.twig') }}
+{% endblock %}

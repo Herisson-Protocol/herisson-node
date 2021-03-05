@@ -10,13 +10,14 @@
  */
 
 
-require_once __DIR__."/../../../../wp-config.php";
+#require_once __DIR__."/../../../../wp-config.php";
+
+
+require_once __DIR__."/../vendor/autoload.php";
 
 
 
-
-
-$options = get_option('HerissonOptions');
-define("HERISSON_URL", get_option('siteurl')."/".$options['basePath']);
+#$options = get_option('HerissonOptions');
+#define("HERISSON_URL", get_option('siteurl')."/".$options['basePath']);
 
 

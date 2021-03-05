@@ -19,4 +19,13 @@
 ###> Herisson ###
 wkhtmltoimage-amd64
 wkhtmltoimage-i386
+.idea
+dump.sql
+run.sh
 ###< Herisson ###
+
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

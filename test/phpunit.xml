@@ -1,21 +1,14 @@
-<phpunit colors="true">
+<phpunit colors="true"
+        bootstrap="Env.php">
     <testsuite name="Herisson">
         <directory>.</directory>
     </testsuite>
     <filter>
         <whitelist>
             <directory suffix=".php">../Herisson/</directory>
-            <exclude>
-                <directory>../Herisson/Models/generated/</directory>
-            </exclude>
         </whitelist>
     </filter>
 
-    <logging>
-        <log type="coverage-html" target="./log/" charset="UTF-8"
-            yui="true" highlight="false"
-            lowUpperBound="35" highLowerBound="70"/>
-    </logging>
     <!--
     -->
 </phpunit>

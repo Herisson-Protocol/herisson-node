@@ -37,7 +37,7 @@ class FirefoxHtmlTest extends FormatTest
     /**
      * Configuration
      *
-     * Create sample data, and Encryption object
+     * Create sample data, and Encryptor object
      *
      * @return void
      */

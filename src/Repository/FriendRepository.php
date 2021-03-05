@@ -14,9 +14,17 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FriendRepository extends ServiceEntityRepository
 {
+    private $registry;
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Friend::class);
+        $this->registry = $registry;
+    }
+
+    public function remove($friend)
+    {
+
+        $this->registry->remove($friend);
     }
 
     // /**
@@ -70,10 +78,14 @@ class FriendRepository extends ServiceEntityRepository
      * 
      * @return a list of all Friends object
      */
-    public static function getAll($paginate=false)
+    public function getAll()
     {
-        return self::getWhere("1=1", null, $paginate);
-    }
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.name', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+            ;    }
 
     /**
      * Retrieve all actives friends
@@ -82,31 +94,18 @@ class FriendRepository extends ServiceEntityRepository
      * 
      * @return a list of all active Friends object
      */
-    public static function getActives($paginate=false)
+    public function getActives()
     {
-        return self::getWhere("is_active=?", array(1), $paginate);
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.is_active = :val')
+            ->setParameter('val', 1)
+            ->orderBy('f.name', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
-
-    /**
-     * Get a Friends lit with where condition
-     *
-     * @param string $where the sql condition
-     * @param array  $data  the value parameters
-     *
-     * @return an array of matching Friend
-     */
-    public static function getWhere($where, $data=array())
-    {
-        $pagination = Pagination::i()->getVars();
-        $friends = Doctrine_Query::create()
-            ->from('Herisson\Entity\Friend')
-            ->where($where)
-            ->limit($pagination['limit'])
-            ->offset($pagination['offset'])
-            ->execute($data);
-        return $friends;
-    }
 
 
     /**

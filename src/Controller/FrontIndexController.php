@@ -3,16 +3,16 @@
 namespace Herisson\Controller;
 
 use Herisson\Entity\Friend;
-use Herisson\Service\Encryption;
-use Herisson\Service\Network;
+use Herisson\Service\Encryption\Encryptor;
+use Herisson\Service\Network\Grabber;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Herisson\Repository\BookmarkRepository;
 use Herisson\Service\OptionLoader;
-use Herisson\Network\Protocol\Exception as ProtocolException;
-use Herisson\Encryption\Exception as EncryptionException;
+use Herisson\Service\Protocol\Exception as ProtocolException;
+use Herisson\Service\Encryption\Exception as EncryptionException;
 
 class FrontIndexController extends AbstractController
 {
@@ -20,7 +20,7 @@ class FrontIndexController extends AbstractController
     public $optionLoader;
     public $encryptionService;
 
-    public function __construct(OptionLoader $optionLoader, Encryption $encryptionService)
+    public function __construct(OptionLoader $optionLoader, Encryptor $encryptionService)
     {
         $this->optionLoader = $optionLoader;
         $this->encryptionService = $encryptionService;
@@ -67,7 +67,7 @@ class FrontIndexController extends AbstractController
      *
      * Handled via HTTP Response code
      *
-     * TODO: Handle Network replies as Exceptions
+     * TODO: Handle Grabber replies as Exceptions
      *
      * @return void
      */
@@ -115,14 +115,14 @@ class FrontIndexController extends AbstractController
                 $backup->creation  = date('Y-m-d H:i:s');
                 $backup->save();
                 
-                Network::reply(200);
+                Grabber::reply(200);
                 echo "1";
                 exit;
             } else {
-                Network::reply(417, HERISSON_EXIT);
+                Grabber::reply(417, HERISSON_EXIT);
             }
         } catch (EncryptionException $e) {
-            Network::reply(417, HERISSON_EXIT);
+            Grabber::reply(417, HERISSON_EXIT);
 
         }
 
@@ -151,10 +151,10 @@ class FrontIndexController extends AbstractController
                 Export::forceDownload($backup->filename, 'herisson.data');
 
             } else {
-                Network::reply(417, HERISSON_EXIT);
+                Grabber::reply(417, HERISSON_EXIT);
             }
         } catch (EncryptionException $e) {
-            Network::reply(417, HERISSON_EXIT);
+            Grabber::reply(417, HERISSON_EXIT);
 
         }
 
@@ -172,13 +172,13 @@ class FrontIndexController extends AbstractController
     {
         
         if ($this->options['acceptBackups'] == 0) {
-            Network::reply(403, HERISSON_EXIT);
+            Grabber::reply(403, HERISSON_EXIT);
             exit;
         }
 
         $dirsize = Folder::getFolderSize(HERISSON_BACKUP_DIR);
         if ($dirsize > $this->options['backupFolderSize']) {
-            Network::reply(406, HERISSON_EXIT);
+            Grabber::reply(406, HERISSON_EXIT);
             exit;
         }
 
@@ -190,7 +190,7 @@ class FrontIndexController extends AbstractController
      *
      * Handled via HTTP Response code
      *
-     * TODO: Handle Network replies as Exceptions
+     * TODO: Handle Grabber replies as Exceptions
      *
      * @Route("/front/ask/", name="front.ask")
      *
@@ -201,7 +201,7 @@ class FrontIndexController extends AbstractController
         $options = $this->optionLoader->load(['acceptFriends']);
         if ($options['acceptFriends'] == 0) {
             throw new ProtocolException(403);
-            //Network::reply(403, HERISSON_EXIT);
+            //Grabber::reply(403, HERISSON_EXIT);
         }
         dump($request);
         $signature = $request->request->get('signature');
@@ -214,17 +214,17 @@ class FrontIndexController extends AbstractController
             $f->getInfo();
             if ($options['acceptFriends'] == 2) {
                 // Friend automatically accepted, so it's a 202 Accepted for further process response
-                Network::reply(202);
+                Grabber::reply(202);
                 $f->setIsActive(true);
             } else {
                 // Friend request need to be manually processed, so it's a 200 Ok response
-                Network::reply(200);
+                Grabber::reply(200);
                 $f->setIsWantsyou(true);
                 $f->setIsActive(false);
             }
             $f->save();
         } else {
-            Network::reply(417, HERISSON_EXIT);
+            Grabber::reply(417, HERISSON_EXIT);
         }
         exit;
     }
@@ -233,7 +233,7 @@ class FrontIndexController extends AbstractController
     /**
      * Action to handle the ask from another site
      *
-     * TODO: Handle Network replies as Exceptions
+     * TODO: Handle Grabber replies as Exceptions
      *
      * @return void
      */
@@ -284,7 +284,7 @@ class FrontIndexController extends AbstractController
      *
      * This is mandatory for Herisson protocol
      * Outputs Text
-     * @Route("/publickey", name="front.publicKey")
+     * @Route("/front/publicKey", name="front.publicKey")
      * @return void
      */
     function publicKeyAction()
@@ -342,14 +342,14 @@ class FrontIndexController extends AbstractController
                 $f->b_youwant=0;
                 $f->is_active=1;
                 $f->save();
-                Network::reply(200);
+                Grabber::reply(200);
                 echo "1";
                 exit;
             } else {
-                Network::reply(417, HERISSON_EXIT);
+                Grabber::reply(417, HERISSON_EXIT);
             }
         } catch (EncryptionException $e) {
-            Network::reply(417, HERISSON_EXIT);
+            Grabber::reply(417, HERISSON_EXIT);
 
         }
     }

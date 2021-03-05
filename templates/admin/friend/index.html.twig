@@ -1,0 +1,73 @@
+
+{% extends 'base.html.twig' %}
+{% block title "Friends list" %}
+{% block body %}
+
+<div class="container">
+    <h2>Friends</h2>
+    {%  if friends | length %}
+    <table class="widefat post " cellspacing="0">
+        <tr>
+            <th style="width: 10%">Alias</th>
+            <th style="width: 15%">Official name</th>
+            <th style="width: 25%">URL</th>
+            <th style="width:  5%">Active</th>
+            <th style="width:  5%">Waiting for friend's validation</th>
+            <th style="width:  5%">Need your validation</th>
+            <th style="width: 10%">Action</th>
+        </tr>
+        {% for friend in friends %}
+        <tr>
+            <td>
+                <b>
+                    <a href="{{ path('admin.friend.edit', {id: friend.id }) }}">
+                        {% if friend.alias %}{{ friend.alias }}{% else %}Unnamed-{{ friend.id }}{%  endif %}
+                    </a>
+                </b>
+            </td>
+            <td>
+                {{  friend.name }}
+
+            </td>
+            <td>
+                <a href="{{ friend.url }}" target="friend">{{ friend.url }}</a>
+            </td>
+            <td>
+                {{ include('mixins/_badge_boolean.html.twig', {value:friend.isActive}) }}
+            </td>
+            <td>
+                {{ include('mixins/_badge_boolean.html.twig', {value:friend.isYouwant}) }}
+            </td>
+            <td>
+                {% if friend.isWantsyou %}
+                    <a class="btn btn-primary btn-success" href="{{ path('admin.friend.approve', {id: friend.id }) }}" onclick="if (confirm('Are you sure ? ')) { return true; } return false;">
+                        Approve
+                    </a>
+                {% endif %}
+
+            </td>
+            <td>
+                <a class="btn btn-primary btn-success" href="{{ path('admin.friend.ask', {id: friend.id }) }}">
+                    Ask
+                </a>
+            </td>
+            <td>
+                <a class="btn btn-primary btn-danger" href="{{ path('admin.friend.delete', {id: friend.id }) }}" onclick="if (confirm('Are you sure ? ')) { return true; } return false;">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {{ friends | length }} friends
+    {% else %}
+
+    "No friend"
+    {% endif %}
+    <p>
+        <a class="btn btn-primary" href="{{ path('admin.friend.new') }}">Add a friend</a>
+    </p>
+
+    <br />
+</div>
+{% endblock %}

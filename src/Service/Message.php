@@ -1,69 +1,31 @@
 <?php
-/**
- * Herisson\Message 
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- */
 
 namespace Herisson\Service;
 
-/**
- * Class: Herisson\Message
- *
- * @category Tools
- * @package  Herisson
- * @author   Thibault Taillandier <thibault@taillandier.name>
- * @license  http://www.gnu.org/licenses/gpl-3.0.txt GPL v3
- * @link     None
- */
+
 class Message
 {
-
-    /**
-     * singleton
-     * @var Message
-     */
-    public static $i;
 
     /**
      * Array of the currently known error in the page.
      *
      * Errors are strings
      */
-    protected $errors;
+    protected $errors = [];
 
     /**
      * Array of the currently known successful items in the page.
      *
      * Successes are strings
      */
-    protected $success;
-
-    /**
-     * Creating singleton
-     *
-     * @return Message instance
-     */
-    public static function i()
-    {
-        if (is_null(self::$i)) {
-            self::$i = new Message();
-            self::$i->errors = array();
-            self::$i->success = array();
-        }
-        return self::$i;
-    }
+    protected $success = [];
 
     /**
      * Get the errors array
      *
-     * @return the array of error messages
+     * @return array of error messages
      */
-    public function getErrors()
+    public function getErrors() : array
     {
         return $this->errors;
     }
@@ -75,7 +37,7 @@ class Message
      *
      * @return void
      */
-    public function addError($message)
+    public function addError(string $message)
     {
         array_push($this->errors, $message);
     }
@@ -83,19 +45,19 @@ class Message
     /**
      * Check if there is any error message
      *
-     * @return the number of errors in the errors array
+     * @return bool
      */
-    public function hasErrors()
+    public function hasErrors() : bool
     {
-        return sizeof($this->errors);
+        return sizeof($this->errors) > 0;
     }
 
     /**
      * Get the success array
      *
-     * @return the array of success messages
+     * @return array of success messages
      */
-    public function getSuccess()
+    public function getSuccess() : array
     {
         return $this->success;
     }
@@ -107,7 +69,7 @@ class Message
      *
      * @return void
      */
-    public function addSucces($message)
+    public function addSucces(string $message)
     {
         array_push($this->success, $message);
     }
@@ -115,11 +77,11 @@ class Message
     /**
      * Check if there is any succes message
      *
-     * @return the number of success in the success array
+     * @return bool
      */
-    public function hasSuccess()
+    public function hasSuccess() : bool
     {
-        return sizeof($this->success);
+        return sizeof($this->success) > 0;
     }
 
 

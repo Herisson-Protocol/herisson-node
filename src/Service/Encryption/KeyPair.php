@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Herisson\Encryption;
+namespace Herisson\Service\Encryption;
 
 
 class KeyPair

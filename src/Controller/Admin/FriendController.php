@@ -2,74 +2,112 @@
 
 namespace Herisson\Controller\Admin;
 
-
+use Herisson\Controller\HerissonController;
+use Herisson\Form\FriendType;
+use Herisson\Service\Protocol\FriendProtocol;
 use Herisson\Service\Message;
 use Herisson\Repository\FriendRepository;
 use Herisson\Entity\Friend;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-
-class FriendController extends AbstractController
+class FriendController extends HerissonController
 {
 
+    /**
+     * @var FriendRepository
+     */
+    private $repository;
+
+    public function __construct(FriendRepository $repository)
+    {
+        $this->repository = $repository;
+        //$this->loadEntityManager();
+    }
+
+    /**
+     * Action to add a new friend
+     *
+     * @Route("/admin/friend/ask/{id}", name="admin.friend.ask")
+     *
+     * @param Friend $friend
+     * @param FriendProtocol $protocol
+     * @return void
+     * @throws \Herisson\Service\Encryption\Exception
+     * @throws \Herisson\Service\Network\Exception
+     * @throws \Herisson\Service\Protocol\Exception
+     */
+    function askAction(Friend $friend, FriendProtocol $protocol) : Response
+    {
+        //$protocol = new FriendProtocol();
+        $protocol->ask($friend);
+        return $this->redirectToRoute('admin.friend.index');
+    }
 
 
     /**
      * Action to add a new friend
      *
-     * Redirect to editAction()
+     * @Route("/ask", name="admin.friend.friendrequest", methods={"POST","GET"})
      *
+     * @param Friend $friend
+     * @param FriendProtocol $protocol
      * @return void
+     * @throws \Herisson\Service\Encryption\Exception
+     * @throws \Herisson\Service\Network\Exception
+     * @throws \Herisson\Service\Protocol\Exception
      */
-    function addAction()
+    function friendAskingAction(Request $request, FriendProtocol $protocol) : Response
     {
-        $this->setView('edit');
-        $this->editAction();
+        $friend = new Friend();
+        $url = $request->request->get('url');
+        $signature = $request->request->get('signature');
+        $friend->setUrl($url);
+
+        $protocol->ask($friend);
     }
+
 
     /**
      * Action to approve a new friend
      *
      * Redirect to editAction()
-     *
-     * @return void
+     * @Route("/admin/friend/approve/{id}", name="admin.friend.approve")
+     * @param Friend $friend
+     * @param Message $message
+     * @return Response
      */
-    function approveAction()
+    function approveAction(Friend $friend, Message $message) : Response
     {
-        $id = intval(param('id'));
-        if ($id>0) {
-            $friend = FriendRepository::get($id);
             if ($friend->validateFriend()) {
-                Message::i()->addSucces("Friend has been notified of your approvement");
+                $message->addSucces("Friend has been notified of your approvement");
             } else {
-                Message::i()->addError("Something went wrong while adding friendFriend has been notified of your approvement");
+                $message->addError("Something went wrong while adding friendFriend has been notified of your approvement");
             }
-        }
         // Redirect to Friends list
-        $this->indexAction();
-        $this->setView('index');
+        return $this->redirectToRoute("admin.friend.index");
+
     }
 
     /**
      * Action to delete a friend
      *
      * Redirect to indexAction()
-     *
-     * @return void
+     * @Route("/admin/friend/delete/{id}", name="admin.friend.delete")
+     * @param Friend $friend
+     * @return Response
      */
-    function deleteAction()
+    function deleteAction(Friend $friend) : Response
     {
-        $id = intval(param('id'));
-        if ($id>0) {
-            $friend = FriendRepository::get($id);
-            $friend->delete();
-        }
+
+        $this->repository->remove($friend);
+
 
         // TODO delete related backups and localbackups
 
         // Redirect to Friends list
-        $this->indexAction();
-        $this->setView('index');
+        return $this->redirectToRoute('admin.friend.index');
     }
 
     /**
@@ -80,7 +118,8 @@ class FriendController extends AbstractController
      *
      * @return void
      */
-    function editAction()
+    /*
+    function editActionOld()
     {
         $id = intval(param('id'));
         if (!$id) {
@@ -127,20 +166,91 @@ class FriendController extends AbstractController
         }
         $this->view->id = $id;
     }
+    */
+
+    /**
+     * @Route("/admin/friend/edit/{id}", name="admin.friend.edit", requirements={"id":"\d+"})
+     * @param Friend $friend
+     * @param Request $request
+     * @return Response
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function editAction(Friend $friend, Request $request) : Response
+    {
+        $form = $this->createForm(FriendType::class, $friend);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'Friend has been successfully modified');
+            return $this->redirectToRoute('admin.friend.index');
+        }
+
+        return $this->render('admin/friend/edit.html.twig', [
+            'friend' => $friend,
+            'form' => $form->createView(),
+        ]);
+
+    }
+
+
+    /**
+     * @Route("/admin/friend/new", name="admin.friend.new")
+     * @param Request $request
+     * @return Response
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function newAction(Request $request) : Response
+    {
+        $friend = new Friend();
+        $form = $this->createForm(FriendType::class, $friend);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->persist($friend);
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'Friend has been successfully created');
+            return $this->redirectToRoute('admin.friend.index');
+        }
+
+        return $this->render('admin/friend/new.html.twig', [
+            'friend' => $friend,
+            'form' => $form->createView(),
+        ]);
+
+    }
+
 
     /**
      * Action to list friends
      *
      * This is the default action
      *
+     * @Route("/admin/friend/index", name="admin.friend.index")
+     *
      * @return void
      */
-    function indexAction()
+    public function indexAction() : Response
     {
-        $this->view->actives  = FriendRepository::getWhere("is_active=1");
-        $this->view->youwant  = FriendRepository::getWhere("b_youwant=1");
-        $this->view->wantsyou = FriendRepository::getWhere("b_wantsyou=1");
-        $this->view->errors   = FriendRepository::getWhere("b_wantsyou!=1 and b_youwant!=1 and is_active!=1");
+        $actives  = $this->repository->getAll();
+        /*
+        $youwant  = $this->repository->getWhere("is_youwant=1");
+        $wantsyou = $this->repository->getWhere("is_wantsyou=1");
+        $errors   = $this->repository->getWhere("is_wantsyou!=1 and is_youwant!=1 and is_active!=1");
+        */
+
+        return $this->render('admin/friend/index.html.twig', [
+                'actives' => $actives,
+                'friends' => $actives,
+                /*
+                'youwant' => $youwant,
+                'wantsyou' => $wantsyou,
+                'errors' => $errors,
+                */
+            ]
+        );
     }
 
     /**
@@ -150,11 +260,13 @@ class FriendController extends AbstractController
      *
      * @return void
      */
+    /*
     function importAction()
     {
         if ( !empty($_POST['login']) && !empty($_POST['password'])) {
         }
     }
+    */
 
 
 }

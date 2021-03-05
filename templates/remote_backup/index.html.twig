@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}RemoteBackup index{% endblock %}
+
+{% block body %}
+    <h1>RemoteBackup index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Size</th>
+                <th>NbBookmarks</th>
+                <th>Created_at</th>
+                <th>Friend_id</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for remote_backup in remote_backups %}
+            <tr>
+                <td>{{ remote_backup.id }}</td>
+                <td>{{ remote_backup.size }}</td>
+                <td>{{ remote_backup.nbBookmarks }}</td>
+                <td>{{ remote_backup.createdAt ? remote_backup.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ remote_backup.friendId }}</td>
+                <td>
+                    <a href="{{ path('remote_backup_show', {'id': remote_backup.id}) }}">show</a>
+                    <a href="{{ path('remote_backup_edit', {'id': remote_backup.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('remote_backup_new') }}">Create new</a>
+{% endblock %}
