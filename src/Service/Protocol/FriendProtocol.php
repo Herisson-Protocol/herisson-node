@@ -105,7 +105,7 @@ class FriendProtocol extends HerissonProtocol
             417 => [$this->message, "addError", "Friend say you dont communicate correctly (key problems?)."],
 
         ];
-        $response = $this->grabber->download($askUrl, $postData);
+        $response = $this->grabber->getResponse($askUrl, $postData);
         dump($response);
         $this->dispatchResponse($response, $dispath);
     }
@@ -124,14 +124,14 @@ class FriendProtocol extends HerissonProtocol
     public function reloadPublicKey(Friend $friend, Grabber $grabber)
     {
             $publicKeyUrl = $friend->getActionUrl(static::PUBLICKEY_PATH);
-            $response = $grabber->download($publicKeyUrl);
+            $response = $grabber->getResponse($publicKeyUrl);
             $friend->setPublicKey($response->getContent());
 
             $dispath = [
                 200 => [$this, "updatePublicKey"],
                 404 => [$this->message, "addError", "This site is not a Herisson site or is closed."],
             ];
-            $response = $this->grabber->download($publicKeyUrl);
+            $response = $this->grabber->getResponse($publicKeyUrl);
             dump($response);
             $this->dispatchResponse($response, $dispath);
     }
@@ -149,7 +149,7 @@ class FriendProtocol extends HerissonProtocol
         $url = $this->url."/info";
         $network = new Grabber();
         try  {
-            $json_data = $network->download($url);
+            $json_data = $network->getContent($url);
             $data = json_decode($json_data['data'], 1);
 
             if (sizeof($data)) {
@@ -186,7 +186,7 @@ class FriendProtocol extends HerissonProtocol
         );
         $network = new Grabber();
         try {
-            $content = $network->download($this->url."/validate", $postData);
+            $content = $network->getResponse($this->url."/validate", $postData);
             if ($content['data'] === "1") {
                 $this->b_wantsyou=0;
                 $this->is_active=1;
@@ -218,7 +218,7 @@ class FriendProtocol extends HerissonProtocol
         );
         $network = new Grabber();
         try {
-            $content = $network->download($this->url."/acceptsbackups", $postData);
+            $content = $network->getResponse($this->url."/acceptsbackups", $postData);
             return intval($content['data']);
         } catch (\Herisson\Service\Network\Exception $e) {
             switch ($e->getCode()) {

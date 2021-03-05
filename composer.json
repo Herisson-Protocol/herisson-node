@@ -78,7 +78,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Herisson\\Tests\\": "tests/"
+            "Herisson\\": "tests/src/"
         }
     },
     "replace": {

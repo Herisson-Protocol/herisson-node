@@ -1,10 +1,9 @@
 <?php
 
 
-namespace Herisson\Tests\src\Herisson\Entity;
+namespace Herisson\Entity;
 
 
-use Herisson\Entity\Friend;
 use PHPUnit\Framework\TestCase;
 
 class FriendTest extends TestCase

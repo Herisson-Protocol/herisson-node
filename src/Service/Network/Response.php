@@ -4,6 +4,8 @@
 namespace Herisson\Service\Network;
 
 
+use phpDocumentor\Reflection\Types\String_;
+
 class Response
 {
 
@@ -12,6 +14,7 @@ class Response
     public $code;
     public $error = false;
     public $message;
+    public $url;
 
     /**
      * HTTP Code
@@ -109,11 +112,30 @@ class Response
      * @param string $type
      * @param string $content
      */
-    public function __construct(int $code = 0, string $type = "", string $content = "")
+    public function __construct(string $url = "", int $code = 0, string $type = "", string $content = "")
     {
+        $this->url = $url;
         $this->setCode($code);
         $this->type = $type;
         $this->content = $content;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    /**
+     * @param string $url
+     * @return Response
+     */
+    public function setUrl(string $url): Response
+    {
+        $this->url = $url;
+        return $this;
     }
 
     /**
@@ -203,10 +225,26 @@ class Response
      */
     public function getMessage() : string
     {
-        dump($this->getCode());
+        //dump($this->getCode());
         if (array_key_exists($this->getCode(), Response::$codes)) {
             return Response::$codes[$this->getCode()];
         }
         return "HTTP code not found";
+    }
+
+    /**
+     * @return int
+     */
+    public function getLength() : int
+    {
+        return strlen($this->getContent());
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString() : string
+    {
+        return $this->getContent();
     }
 }
