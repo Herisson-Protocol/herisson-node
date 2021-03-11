@@ -37,5 +37,7 @@ services:
         #calls:
         #    - [setContainer, ["@service_container"]]
 
+    Herisson\Service\Network\GrabberInterface: '@Herisson\Service\Network\GrabberGuzzle'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

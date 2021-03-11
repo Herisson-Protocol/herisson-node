@@ -4,7 +4,7 @@ namespace Herisson\Controller;
 
 use Herisson\Entity\Friend;
 use Herisson\Service\Encryption\Encryptor;
-use Herisson\Service\Network\Grabber;
+use Herisson\Service\Network\AbstractGrabber;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -115,14 +115,14 @@ class FrontIndexController extends AbstractController
                 $backup->creation  = date('Y-m-d H:i:s');
                 $backup->save();
                 
-                Grabber::reply(200);
+                AbstractGrabber::reply(200);
                 echo "1";
                 exit;
             } else {
-                Grabber::reply(417, HERISSON_EXIT);
+                AbstractGrabber::reply(417, HERISSON_EXIT);
             }
         } catch (EncryptionException $e) {
-            Grabber::reply(417, HERISSON_EXIT);
+            AbstractGrabber::reply(417, HERISSON_EXIT);
 
         }
 
@@ -151,10 +151,10 @@ class FrontIndexController extends AbstractController
                 Export::forceDownload($backup->filename, 'herisson.data');
 
             } else {
-                Grabber::reply(417, HERISSON_EXIT);
+                AbstractGrabber::reply(417, HERISSON_EXIT);
             }
         } catch (EncryptionException $e) {
-            Grabber::reply(417, HERISSON_EXIT);
+            AbstractGrabber::reply(417, HERISSON_EXIT);
 
         }
 
@@ -172,13 +172,13 @@ class FrontIndexController extends AbstractController
     {
         
         if ($this->options['acceptBackups'] == 0) {
-            Grabber::reply(403, HERISSON_EXIT);
+            AbstractGrabber::reply(403, HERISSON_EXIT);
             exit;
         }
 
         $dirsize = Folder::getFolderSize(HERISSON_BACKUP_DIR);
         if ($dirsize > $this->options['backupFolderSize']) {
-            Grabber::reply(406, HERISSON_EXIT);
+            AbstractGrabber::reply(406, HERISSON_EXIT);
             exit;
         }
 
@@ -214,17 +214,17 @@ class FrontIndexController extends AbstractController
             $f->getInfo();
             if ($options['acceptFriends'] == 2) {
                 // Friend automatically accepted, so it's a 202 Accepted for further process response
-                Grabber::reply(202);
+                AbstractGrabber::reply(202);
                 $f->setIsActive(true);
             } else {
                 // Friend request need to be manually processed, so it's a 200 Ok response
-                Grabber::reply(200);
+                AbstractGrabber::reply(200);
                 $f->setIsWantsyou(true);
                 $f->setIsActive(false);
             }
             $f->save();
         } else {
-            Grabber::reply(417, HERISSON_EXIT);
+            AbstractGrabber::reply(417, HERISSON_EXIT);
         }
         exit;
     }
@@ -263,7 +263,7 @@ class FrontIndexController extends AbstractController
      * This is mandatory for Herisson protocol
      * Outputs JSON
      *
-     * @Route("/front/info/", name="front.info")
+     * @Route("/info", name="front.info")
      * @return void
      */
     function infoAction() : Response
@@ -284,7 +284,7 @@ class FrontIndexController extends AbstractController
      *
      * This is mandatory for Herisson protocol
      * Outputs Text
-     * @Route("/front/publicKey", name="front.publicKey")
+     * @Route("/publicKey", name="front.publicKey")
      * @return void
      */
     function publicKeyAction()
@@ -342,14 +342,14 @@ class FrontIndexController extends AbstractController
                 $f->b_youwant=0;
                 $f->is_active=1;
                 $f->save();
-                Grabber::reply(200);
+                AbstractGrabber::reply(200);
                 echo "1";
                 exit;
             } else {
-                Grabber::reply(417, HERISSON_EXIT);
+                AbstractGrabber::reply(417, HERISSON_EXIT);
             }
         } catch (EncryptionException $e) {
-            Grabber::reply(417, HERISSON_EXIT);
+            AbstractGrabber::reply(417, HERISSON_EXIT);
 
         }
     }

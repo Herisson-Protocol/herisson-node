@@ -5,10 +5,20 @@ namespace Herisson\Service\Network;
 
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\ResponseInterface;
 
-class GrabberGuzzle extends AbstractGrabber implements GrabberInterface
+class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
 {
+
+    public $responses = [];
+
+
+    public function setResponses(array $responses)
+    {
+        $this->responses = $responses;
+    }
 
     /**
      * Download an URL
@@ -21,7 +31,14 @@ class GrabberGuzzle extends AbstractGrabber implements GrabberInterface
      */
     public function getResponse(string $url, $post = []) : Response
     {
-        $client = new Client();
+
+
+        // Create a mock and queue two responses.
+        $mock = new MockHandler($this->responses);
+
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
         if (count($post)) {
             $res = $client->request('POST', $url, [
                 'form_params' => $post,
@@ -32,11 +49,7 @@ class GrabberGuzzle extends AbstractGrabber implements GrabberInterface
                 'http_errors' => false
             ]);
         }
-
-        $response = $this->createResponseFromGuzzle($url, $res);
-
-        $this->analyzeResponse($response);
-        return $response;
+        return $this->createResponseFromGuzzle($url, $res);
     }
 
     public function createResponseFromGuzzle(string $url, ResponseInterface $guzzleResponse)
@@ -46,7 +59,6 @@ class GrabberGuzzle extends AbstractGrabber implements GrabberInterface
         $content = (string) $guzzleResponse->getBody();
 
         return new Response($url, $code, $contentType, $content);
-
     }
 
     /**

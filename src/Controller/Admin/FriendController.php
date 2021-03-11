@@ -4,10 +4,13 @@ namespace Herisson\Controller\Admin;
 
 use Herisson\Controller\HerissonController;
 use Herisson\Form\FriendType;
+use Herisson\Service\Encryption\Encryptor;
+use Herisson\Service\Network\AbstractGrabber;
 use Herisson\Service\Protocol\FriendProtocol;
 use Herisson\Service\Message;
 use Herisson\Repository\FriendRepository;
 use Herisson\Entity\Friend;
+use Herisson\UseCase\Friend\AskForFriendRequest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -38,10 +41,10 @@ class FriendController extends HerissonController
      * @throws \Herisson\Service\Network\Exception
      * @throws \Herisson\Service\Protocol\Exception
      */
-    function askAction(Friend $friend, FriendProtocol $protocol) : Response
+    function askToFriendAction(Friend $friend, FriendProtocol $protocol) : Response
     {
         //$protocol = new FriendProtocol();
-        $protocol->ask($friend);
+        $protocol->askForFriend($friend);
         return $this->redirectToRoute('admin.friend.index');
     }
 
@@ -60,13 +63,45 @@ class FriendController extends HerissonController
      */
     function friendAskingAction(Request $request, FriendProtocol $protocol) : Response
     {
+        /*
+        $arequest = AskForFriendRequest();
+        $arequest->url = $request->request->get('url');
+        $arequest->signature = $request->request->get('signature');
+        $arequest->execute()
+        */
+
+
+
         $friend = new Friend();
+        /*
         $url = $request->request->get('url');
         $signature = $request->request->get('signature');
-        $friend->setUrl($url);
+        $url = $request->query->get('url');
+        $signature = $request->query->get('signature');
+        */
+        $url = "http://localhost:8001/";
+        $signature = "Oo1Xzxjb0PO2YjXQPPJ+lL/KhUMo2BPTaEc0mORrXEwRpHjHszQtY6PRIoVw38eMbts0+ZYAyZJFEPZWtw2TNOiztj+fCKn/HLnCIFvLtJJc35fw40A32dCLrdirjQTROer8EcVl7jvU6++ojPvgPxkDYVRWZzDLCsdZVmV72JTwIU1Qi+C7XrrcljEnzZb9i6Ti7C8+zI10lgJAgbO8F9L6ymWyMavDxS7+2MC2tiSlp1mQ1G6PNHi/m/xoywkRHo7+lybS4cMo4RRQc9mJr+7t3Fij9xcX52Rh/FOk8iqvyhMKQGEhNCjNISRBfQXbfdfw3jlRmcF1omCH7dYKTA==";
 
-        $protocol->ask($friend);
+        $friend->setUrl($url);
+        $protocol->getInfo($friend);
+        $protocol->reloadPublicKey($friend);
+        dump($friend);
+        $encryptor = new Encryptor();
+        $uncipheredData = $encryptor->publicDecrypt($signature, $friend->getPublicKey());
+        error_log("friendAskingAction");
+        if ($uncipheredData == $url) {
+            error_log("err code 200");
+            AbstractGrabber::reply(200);
+            exit;
+        }
+        AbstractGrabber::reply(500);
+        error_log("err code 500");
+        exit;
+
+
+        //$protocol->ask($site, $friend);
     }
+
 
 
     /**

@@ -6,7 +6,7 @@ use Herisson\Service\Network\Exception as NetworkException;
 use Herisson\Service\Message;
 
 
-abstract class Grabber implements GrabberInterface
+abstract class AbstractGrabber implements GrabberInterface
 {
 
     public $messageService;

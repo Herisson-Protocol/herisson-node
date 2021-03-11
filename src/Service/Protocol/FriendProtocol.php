@@ -5,11 +5,14 @@ namespace Herisson\Service\Protocol;
 
 use Doctrine\ORM\EntityManager;
 use Herisson\Entity\Friend;
-use Herisson\Repository\FriendRepository;
+use Herisson\Entity\Site;
 use Herisson\Service\Encryption\Encryptor;
+use Herisson\Service\Encryption\Exception as EncryptorException;
 use Herisson\Service\Message;
-use Herisson\Service\Network\Exception as NetworkException;
-use Herisson\Service\Network\Grabber;
+use Herisson\Service\Network\AbstractGrabber;
+use Herisson\Service\Network\GrabberCurl;
+use Herisson\Service\Network\GrabberInterface;
+use Herisson\Service\Network\Response;
 use Herisson\Service\OptionLoader;
 
 class FriendProtocol extends HerissonProtocol
@@ -35,7 +38,7 @@ class FriendProtocol extends HerissonProtocol
     private $encryptor;
 
     /**
-     * @var Grabber
+     * @var GrabberInterface
      */
     private $grabber;
 
@@ -48,10 +51,10 @@ class FriendProtocol extends HerissonProtocol
      * FriendProtocol constructor.
      * @param OptionLoader $optionLoader
      * @param Encryptor $encryptor
-     * @param Grabber $grabber
+     * @param AbstractGrabber $grabber
      * @param Message $message
      */
-    public function __construct(OptionLoader $optionLoader, Encryptor $encryptor, Grabber $grabber, Message $message)
+    public function __construct(OptionLoader $optionLoader, Encryptor $encryptor, GrabberInterface $grabber, Message $message)
     {
         $this->optionLoader = $optionLoader;
         $this->encryptor = $encryptor;
@@ -65,6 +68,7 @@ class FriendProtocol extends HerissonProtocol
         $em->persist($friend);
         $em->flush();
     }
+
     public function friendValidateOurRequest(Friend $friend, EntityManager $em)
     {
         $friend->friendValidateOurRequest();
@@ -84,19 +88,40 @@ class FriendProtocol extends HerissonProtocol
      * @throws \Herisson\Service\Encryption\Exception
      * @throws \Herisson\Service\Network\Exception
      */
-    public function ask(Friend $friend)
+    public function askForFriend(Site $site, Friend $friend)
     {
-        $options = $this->optionLoader->load(['siteurl', 'basePath', 'privateKey']);
         $askUrl = $friend->getActionUrl(static::ASK_PATH);
-        dump($askUrl);
-        $mysite = $options['siteurl']."/".$options['basePath'];
-        $signature = $this->encryptor->privateEncrypt($mysite, $options['privateKey']);
+        $mysite = $site->getSitePath();
+        $signature = $this->encryptor->privateEncrypt($mysite, $site->privateKey); //options['privateKey']);
 
         $postData = [
             'url'       => $mysite,
             'signature' => $signature
         ];
-        dump($postData);
+        $response = $this->grabber->getResponse($askUrl, $postData);
+        $code = $response->getCode();
+
+        switch ($code) {
+            case 200:
+                $friend->setIsValidatedByUs(true);
+                break;
+            case 202:
+                $friend->setIsValidatedByUs(true);
+                $friend->setIsValidatedByHim(true);
+                break;
+            case 403:
+                $this->message->addError("This site refuses new friends.");
+                break;
+            case 404:
+                $this->message->addError("This site is not a Herisson site or is closed.");
+                break;
+            case 417:
+                $this->message->addError("Friend say you dont communicate correctly (key problems?).");
+                break;
+            default:
+                throw new Exception("Unknown code $code");
+        }
+        /*
         $dispath = [
             200 => [$this, "pendingForFriendsValidation", $friend],
             202 => [$this, "friendValidateOurRequest", $friend],
@@ -105,9 +130,9 @@ class FriendProtocol extends HerissonProtocol
             417 => [$this->message, "addError", "Friend say you dont communicate correctly (key problems?)."],
 
         ];
-        $response = $this->grabber->getResponse($askUrl, $postData);
         dump($response);
         $this->dispatchResponse($response, $dispath);
+        */
     }
 
     /**
@@ -121,19 +146,23 @@ class FriendProtocol extends HerissonProtocol
      * @throws \Herisson\Service\Encryption\Exception
      * @throws \Herisson\Service\Network\Exception
      */
-    public function reloadPublicKey(Friend $friend, Grabber $grabber)
+    public function reloadPublicKey(Friend $friend)
     {
             $publicKeyUrl = $friend->getActionUrl(static::PUBLICKEY_PATH);
-            $response = $grabber->getResponse($publicKeyUrl);
-            $friend->setPublicKey($response->getContent());
-
-            $dispath = [
-                200 => [$this, "updatePublicKey"],
-                404 => [$this->message, "addError", "This site is not a Herisson site or is closed."],
-            ];
             $response = $this->grabber->getResponse($publicKeyUrl);
-            dump($response);
-            $this->dispatchResponse($response, $dispath);
+
+            $code = $response->getCode();
+            switch ($code) {
+                case 200:
+                    $friend->setPublicKey($response->getContent());
+                    break;
+                case 404:
+                    $this->message->addError("This site is not a Herisson site or is closed.");
+                    break;
+                default:
+                    throw new Exception("Unknown code $code");
+            }
+
     }
 
 
@@ -142,30 +171,84 @@ class FriendProtocol extends HerissonProtocol
      *
      * Do a network hit to retrieve friend's info
      *
+     * @param Friend $friend
      * @return void
+     * @throws Exception
      */
-    public function getInfo()
+    public function getInfo(Friend $friend)
     {
-        $url = $this->url."/info";
-        $network = new Grabber();
-        try  {
-            $json_data = $network->getContent($url);
-            $data = json_decode($json_data['data'], 1);
+        $infoUrl = $friend->getActionUrl(static::INFO_PATH);
+        $response = $this->grabber->getResponse($infoUrl);
 
-            if (sizeof($data)) {
-                $this->name  = $data['sitename'];
-                $this->email = $data['adminEmail'];
-            } else {
-                $this->is_active=0;
-            }
+        $code = $response->getCode();
+        switch ($code) {
+            case 200:
+                $jsonString = $response->getContent();
+                $json = json_decode($jsonString);
+                //dump($jsonString);
+                $friend->setEmail($json->adminEmail);
+                $friend->setName($json->sitename);
+                break;
+            case 404:
+                $friend->setIsActive(false);
+                $this->message->addError("This site is not a Herisson site or is closed.");
+                break;
+            default:
+                throw new Exception("Unknown code $code");
+        }
 
-        } catch (NetworkException $e) {
-            $this->is_active=0;
-            switch ($e->getCode()) {
-                case 404:
-                    Message::i()->addError("This site is not a Herisson site or is closed.");
-                    break;
-            }
+    }
+
+
+    /**
+     * Validate a friend
+     *
+     * Do network hit to the friend's url and validate it's request
+     *
+     * @return bool true if validation was succesful, false otherwise
+     */
+    public function autorizeFriendRequest(Site $site, Friend $friend)
+    {
+        $validateUrl = $friend->getActionUrl(static::VALIDATE_PATH);
+        $response = $this->grabber->getResponse($validateUrl);
+
+        $signature = $this->encryptor->privateEncrypt($site->getSitePath(), $site->privateKey);
+        $postData = array(
+            'url'       => $site->getSitePath(),
+            'signature' => $signature
+        );
+        switch ($response->getCode()) {
+            case 200:
+                //$friend->setIsValidatedByHim(true);
+                $friend->setIsValidatedByUs(true);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /**
+     * Validate a friend
+     *
+     * Do network hit to the friend's url and validate it's request
+     *
+     * @return Response
+     */
+    public function handleFriendValidation(Site $site, Friend $friend, string $signature)
+    {
+        $this->reloadPublicKey($friend);
+        try {
+            $uncipheredUrl = $this->encryptor->publicDecrypt($signature, $friend->getPublicKey());
+        } catch (EncryptorException $e) {
+            return new Response("", 417, "");
+        }
+
+        if ($friend->getUrl() == $uncipheredUrl) {
+            $friend->setIsValidatedByUs(true);
+            return new Response("", 200, "");
+        } else {
+            return new Response("", 417, "");
         }
     }
 
@@ -177,6 +260,7 @@ class FriendProtocol extends HerissonProtocol
      *
      * @return bool true if validation was succesful, false otherwise
      */
+    /*
     public function validateFriend(Encryptor $encryptor, Message $message)
     {
         $signature = $encryptor->privateEncrypt(HERISSON_LOCAL_URL);
@@ -184,7 +268,7 @@ class FriendProtocol extends HerissonProtocol
             'url'       => HERISSON_LOCAL_URL,
             'signature' => $signature
         );
-        $network = new Grabber();
+        $network = new GrabberCurl();
         try {
             $content = $network->getResponse($this->url."/validate", $postData);
             if ($content['data'] === "1") {
@@ -200,6 +284,7 @@ class FriendProtocol extends HerissonProtocol
             return false;
         }
     }
+    */
 
 
     /**
@@ -216,7 +301,7 @@ class FriendProtocol extends HerissonProtocol
             'url'       => HERISSON_LOCAL_URL,
             'signature' => $signature
         );
-        $network = new Grabber();
+        $network = new GrabberCurl();
         try {
             $content = $network->getResponse($this->url."/acceptsbackups", $postData);
             return intval($content['data']);
@@ -254,7 +339,7 @@ class FriendProtocol extends HerissonProtocol
             'signature'  => $signature,
             'backupData' => serialize($cryptedData),
         );
-        $network = new Grabber();
+        $network = new GrabberCurl();
         try {
             $content = $network->download($this->url."/sendbackup", $postData);
             return intval($content['data']);
@@ -284,7 +369,7 @@ class FriendProtocol extends HerissonProtocol
             'url'        => HERISSON_LOCAL_URL,
             'signature'  => $signature,
         );
-        $network = new Grabber();
+        $network = new GrabberCurl();
         try {
             $content = $network->download($this->url."/downloadbackup", $postData);
 
@@ -321,7 +406,7 @@ class FriendProtocol extends HerissonProtocol
         $options = get_option('HerissonOptions');
         $my_public_key = $options['publicKey'];
         if (function_exists('curl_init')) {
-            $network = new Grabber();
+            $network = new GrabberCurl();
             $params['key'] = $my_public_key;
             try {
 
@@ -363,7 +448,7 @@ class FriendProtocol extends HerissonProtocol
         try {
             $json_display = $encryptor->publicEncryptLongData($json_data, $this->public_key);
         } catch (\Herisson\Service\Encryption\Exception $e) {
-            Grabber::reply(417);
+            AbstractGrabber::reply(417);
             echo $e->getMessage();
         }
         return json_encode($json_display);

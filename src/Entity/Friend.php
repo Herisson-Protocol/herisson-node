@@ -3,12 +3,7 @@
 namespace Herisson\Entity;
 
 use Herisson\Repository\FriendRepository;
-use Herisson\Service\Network\Grabber;
 use Doctrine\ORM\Mapping as ORM;
-use Herisson\Service\Encryption\Encryptor;
-use Herisson\Service\Message;
-use Herisson\Repository\BookmarkRepository;
-use Herisson\Service\Network\Exception as NetworkException;
 
 /**
  * @ORM\Entity(repositoryClass=FriendRepository::class)
@@ -50,27 +45,17 @@ class Friend
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_active;
+    private $is_active = false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_youwant;
+    private $is_validated_by_us = false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_wantsyou;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $is_validated_by_us;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $is_validated_by_him;
+    private $is_validated_by_him = false;
 
     public function getId(): ?int
     {
@@ -91,7 +76,6 @@ class Friend
     public function setUrl(string $url): self
     {
         $this->url = rtrim($url, '/');
-        //$this->reloadPublicKey();
         return $this;
     }
 
@@ -139,7 +123,6 @@ class Friend
     public function setPublicKey(string $public_key): self
     {
         $this->public_key = $public_key;
-
         return $this;
     }
 
@@ -151,33 +134,9 @@ class Friend
     public function setIsActive(bool $is_active): self
     {
         $this->is_active = $is_active;
-
         return $this;
     }
 
-    public function getIsYouwant(): ?bool
-    {
-        return $this->is_youwant;
-    }
-
-    public function setIsYouwant(bool $is_youwant): self
-    {
-        $this->is_youwant = $is_youwant;
-
-        return $this;
-    }
-
-    public function getIsWantsyou(): ?bool
-    {
-        return $this->is_wantsyou;
-    }
-
-    public function setIsWantsyou(bool $is_wantsyou): self
-    {
-        $this->is_wantsyou = $is_wantsyou;
-
-        return $this;
-    }
 
 
     public function getIsValidatedByUs(): bool
@@ -188,6 +147,7 @@ class Friend
     public function setIsValidatedByUs(bool $is_validated_by_us): self
     {
         $this->is_validated_by_us = $is_validated_by_us ? 1 : 0;
+        $this->updateActiveState();
 
         return $this;
     }
@@ -200,6 +160,7 @@ class Friend
     public function setIsValidatedByHim(bool $is_validated_by_him): self
     {
         $this->is_validated_by_him = $is_validated_by_him ? 1 : 0;
+        $this->updateActiveState();
 
         return $this;
     }
@@ -217,7 +178,7 @@ class Friend
     }
 
 
-
+/*
     private function waitingForFriendValidation()
     {
         $this->getObject()->setIsYouwant(true);
@@ -226,6 +187,7 @@ class Friend
         $this->getDoctrine()->getManager()->flush();
 
     }
+*/
 
     public function updateActiveState()
     {
@@ -247,24 +209,6 @@ class Friend
         $this->setIsValidatedByHim(true);
         $this->updateActiveState();
     }
-
-    public function pendingForFriendsValidation()
-    {
-        $this->setIsValidatedByHim(false);
-        $this->setIsValidatedByUs(true);
-        $this->updateActiveState();
-    }
-
-
-    private function updatePublicKey()
-    {
-
-        // Friend automatically accepted the request. Adding now.
-        $this->getObject()->setPublicKey(true);
-        $this->getDoctrine()->getManager()->persist($this->getObject());
-        $this->getDoctrine()->getManager()->flush();
-    }
-
 
 
 }

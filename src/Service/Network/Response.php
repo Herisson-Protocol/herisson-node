@@ -1,10 +1,6 @@
 <?php
 
-
 namespace Herisson\Service\Network;
-
-
-use phpDocumentor\Reflection\Types\String_;
 
 class Response
 {
@@ -70,7 +66,6 @@ class Response
         "422" => "Unprocessable Entity (WebDAV; RFC 4918)",
         "423" => "Locked (WebDAV; RFC 4918)",
         "424" => "Failed Dependency (WebDAV; RFC 4918)",
-        //    "424" => "Method Failure (WebDAV)[13]",
         "425" => "Unordered Collection (Internet draft)",
         "426" => "Upgrade Required (RFC 2817)",
         "428" => "Precondition Required (RFC 6585)",
@@ -93,9 +88,9 @@ class Response
         "508" => "Loop Detected (WebDAV; RFC 5842)",
         "509" => "Bandwidth Limit Exceeded (Apache bw/limited extension)",
         "510" => "Not Extended (RFC 2774)",
-        "511" => "Grabber Authentication Required (RFC 6585)",
-        "598" => "Grabber read timeout error (Unknown)",
-        "599" => "Grabber connect timeout error (Unknown)",
+        "511" => "Network Authentication Required (RFC 6585)",
+        "598" => "Network read timeout error (Unknown)",
+        "599" => "Network connect timeout error (Unknown)",
     ];
 
     public static $types = [
@@ -202,6 +197,7 @@ class Response
     {
         return $this->getError();
     }
+
     /**
      * @return bool
      */

@@ -6,8 +6,9 @@ namespace Herisson\Service\Network;
 
 use Herisson\Service\Network\Exception as NetworkException;
 
-class GrabberCurl extends Grabber implements GrabberInterface
+class GrabberCurl extends AbstractGrabber implements GrabberInterface
 {
+
 
 
     /**
@@ -29,6 +30,7 @@ class GrabberCurl extends Grabber implements GrabberInterface
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5);
             curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+            //curl_setopt($curl, CURLOPT_VERBOSE, true);
             if ($post && count($post)) {
                 curl_setopt($curl, CURLOPT_POST, true);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
@@ -64,7 +66,6 @@ class GrabberCurl extends Grabber implements GrabberInterface
     private function createResponseFromCurl($url, $curl)
     {
         $content =  curl_exec($curl);
-        //dump($content);
         $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
         return new Response($url, $code, $contentType, $content);
