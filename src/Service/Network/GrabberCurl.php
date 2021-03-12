@@ -4,8 +4,6 @@
 namespace Herisson\Service\Network;
 
 
-use Herisson\Service\Network\Exception as NetworkException;
-
 class GrabberCurl extends AbstractGrabber implements GrabberInterface
 {
 
@@ -48,8 +46,8 @@ class GrabberCurl extends AbstractGrabber implements GrabberInterface
      * @param string $url  the URL to download
      * @param array $post the data to send via POST method
      *
-     * @throws Exception
      * @return Response the text content
+     *@throws NetworkException
      */
     public function getResponse(string $url, $post = []) : Response
     {
@@ -76,8 +74,8 @@ class GrabberCurl extends AbstractGrabber implements GrabberInterface
      *
      * @param string $url the URL to download
      *
-     * @throws Exception
      * @return Response the HTTP status
+     *@throws NetworkException
      */
     public function check(string $url) : Response
     {

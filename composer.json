@@ -98,7 +98,9 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "test": "phpunit -c phpunit.xml"
+        "test": "./vendor/bin/phpunit -c phpunit.xml --colors=always",
+        "testci": "./vendor/bin/phpunit -c phpunit.xml --colors=never  --coverage-text ",
+        "testcifull": "./vendor/bin/phpunit --colors=never -c phpunit.xml  --coverage-text --coverage-html build/coverage/ --coverage-clover build/phpunit.coverage.xml --log-junit build/phpunit.report.xml "
     },
     "conflict": {
         "symfony/symfony": "*"

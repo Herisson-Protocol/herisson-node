@@ -7,6 +7,7 @@ namespace Herisson\Service\Protocol;
 use Herisson\Entity\Friend;
 use Herisson\Entity\Site;
 use Herisson\Repository\OptionRepository;
+use Herisson\Repository\OptionRepositoryMock;
 use Herisson\Service\Encryption\Encryptor;
 use Herisson\Service\Encryption\KeyPair;
 use Herisson\Service\Message;
@@ -38,14 +39,9 @@ cQIDAQAB
         ];
     }
 
-    public function testDummy()
-    {
-        $this->assertTrue(true);
-    }
-
     public function createProtocolObject(array $responses = null) : FriendProtocol
     {
-        $optionRepository = $this->createMock(OptionRepository::class);
+        $optionRepository = new OptionRepositoryMock();
         $optionLoader = new OptionLoader($optionRepository);
         $encryptor = new Encryptor();
         $message = new Message();
@@ -58,26 +54,32 @@ cQIDAQAB
 
     public function testReloadPublicKey()
     {
+        // Given
         $responses = [
             new Response(200, ['Content-Type' => 'text/html'], $this->publicKey),
         ];
         $friendProtocol = $this->createProtocolObject($responses);
         $friend = new Friend();
         $friend->setUrl('http://thailande.taillandier.name/bookmarks/');
+        // When
         $friendProtocol->reloadPublicKey($friend);
+        // Then
         $this->assertEquals($this->publicKey, $friend->getPublicKey());
     }
 
 
     public function testGetInfo()
     {
+        // Given
         $responses = [
             new Response(200, ['Content-Type' => 'text/html'], json_encode($this->infos)),
         ];
         $friendProtocol = $this->createProtocolObject($responses);
         $friend = new Friend();
         $friend->setUrl('http://thailande.taillandier.name/bookmarks/');
+        // When
         $friendProtocol->getInfo($friend);
+        // Then
         $this->assertEquals($this->infos['adminEmail'], $friend->getEmail());
         $this->assertEquals($this->infos['sitename'], $friend->getName());
     }
@@ -98,13 +100,16 @@ cQIDAQAB
 
     public function testAskWaitingValidation()
     {
+        // Given
         $responses = [
             new Response(200, ['Content-Type' => 'text/html'], '1'),
         ];
         $friendProtocol = $this->createProtocolObject($responses);
         $site = $this->createSiteObject();
         $friend = new Friend();
+        // When
         $friendProtocol->askForFriend($site, $friend);
+        // Then
         $this->assertTrue($friend->getIsValidatedByUs());
         $this->assertFalse($friend->getIsValidatedByHim());
         $this->assertFalse($friend->getIsActive());
@@ -113,13 +118,16 @@ cQIDAQAB
 
     public function testAskWithAutomaticValidation()
     {
+        // Given
         $responses = [
             new Response(202, ['Content-Type' => 'text/html'], '1'),
         ];
         $friendProtocol = $this->createProtocolObject($responses);
         $site = $this->createSiteObject();
         $friend = new Friend();
+        // When
         $friendProtocol->askForFriend($site, $friend);
+        // Then
         $this->assertTrue($friend->getIsValidatedByUs());
         $this->assertTrue($friend->getIsValidatedByHim());
         $this->assertTrue($friend->getIsActive());
@@ -127,13 +135,16 @@ cQIDAQAB
 
     public function testAskWithKeyProblems()
     {
+        // Given
         $responses = [
             new Response(417, ['Content-Type' => 'text/html'], '1'),
         ];
         $friendProtocol = $this->createProtocolObject($responses);
         $site = $this->createSiteObject();
         $friend = new Friend();
+        // When
         $friendProtocol->askForFriend($site, $friend);
+        // Then
         $this->assertFalse($friend->getIsValidatedByHim());
         $this->assertFalse($friend->getIsActive());
     }
@@ -141,6 +152,7 @@ cQIDAQAB
 
     public function testAutorizeFriendRequest()
     {
+        // Given
         $responses = [
             new Response(200, ['Content-Type' => 'text/html'], '1'),
         ];
@@ -148,13 +160,16 @@ cQIDAQAB
         $site = $this->createSiteObject();
         $friend = new Friend();
         $friend->setIsValidatedByHim(true);
+        // When
         $friendProtocol->autorizeFriendRequest($site, $friend);
+        // Then
         $this->assertTrue($friend->getIsValidatedByUs());
         $this->assertTrue($friend->getIsActive());
     }
 
-    public function testHandleFriendValidationOK()
+    public function testHandleFriendValidationOk()
     {
+        // Given
         $key = KeyPair::generate();
         $encryptor = new Encryptor();
         $url = "http://dummy";
@@ -164,16 +179,20 @@ cQIDAQAB
         ];
         $friendProtocol = $this->createProtocolObject($responses);
         $site = $this->createSiteObject();
+
+        // When
         $friend = new Friend();
         $friend->setUrl($url);
         $response = $friendProtocol->handleFriendValidation($site, $friend, $signature);
+
+        //Then
         $this->assertEquals(200, $response->getCode());
         $this->assertFalse($friend->getIsValidatedByHim());
         $this->assertFalse($friend->getIsActive());
     }
 
 
-    public function testHandleFriendValidationNOK()
+    public function testHandleFriendValidationNok()
     {
         $responses = [
             new Response(200, ['Content-Type' => 'text/html'], $this->publicKey),

@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Option[]    findAll()
  * @method Option[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class OptionRepository extends ServiceEntityRepository
+class OptionRepository extends ServiceEntityRepository implements OptionRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

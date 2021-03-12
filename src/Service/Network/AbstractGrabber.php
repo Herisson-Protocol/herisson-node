@@ -2,7 +2,7 @@
 
 namespace Herisson\Service\Network;
 
-use Herisson\Service\Network\Exception as NetworkException;
+use Herisson\Service\Network\NetworkException as NetworkException;
 use Herisson\Service\Message;
 
 
@@ -22,8 +22,8 @@ abstract class AbstractGrabber implements GrabberInterface
      * @param string $url  the URL to download
      * @param array $post the data to send via POST method
      *
-     * @throws Exception
      * @return Response the text content
+     *@throws NetworkException
      */
     public function getContent(string $url, $post = []) : string
     {
@@ -39,6 +39,7 @@ abstract class AbstractGrabber implements GrabberInterface
      *
      * @return void
      */
+    /*
     public static function reply(int $code, bool $exit = false)
     {
         $codes = Response::$codes;
@@ -56,6 +57,7 @@ abstract class AbstractGrabber implements GrabberInterface
             echo "Error, HTTP code $code does not exist.";
         }
     }
+    */
 
     public function analyzeResponse($response)
     {

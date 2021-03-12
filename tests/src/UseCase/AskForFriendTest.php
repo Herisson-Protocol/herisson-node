@@ -5,6 +5,7 @@ namespace Herisson\UseCase;
 
 
 
+use Herisson\Repository\FriendRepositoryMock;
 use Herisson\Service\Encryption\Encryptor;
 use Herisson\Service\Encryption\KeyPair;
 use Herisson\UseCase\Friend\AskForFriend;
@@ -20,7 +21,6 @@ class AskForFriendTest extends TestCase
         $this->assertTrue(true);
     }
 
-    /*
     public function testExecute()
     {
         $key = KeyPair::generate();
@@ -31,10 +31,11 @@ class AskForFriendTest extends TestCase
         $request->url = $url;
         $request->publicKey = $key->getPublic();
         $response = new AskForFriendResponse();
-        $usecase = new AskForFriend();
+        $usecase = new AskForFriend(new FriendRepositoryMock());
         $usecase->execute($request, $response);
         $this->assertTrue($response->valid);
 
     }
+    /*
     */
 }

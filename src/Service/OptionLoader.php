@@ -2,14 +2,14 @@
 
 namespace Herisson\Service;
 
-use Herisson\Repository\OptionRepository;
+use Herisson\Repository\OptionRepositoryInterface;
 
 class OptionLoader
 {
     public $options = [];
     public $optionRepository = [];
 
-    public function __construct(OptionRepository $optionRepository)
+    public function __construct(OptionRepositoryInterface $optionRepository)
     {
         $this->optionRepository = $optionRepository;
     }

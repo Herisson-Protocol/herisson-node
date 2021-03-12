@@ -2,7 +2,7 @@
 
 namespace Herisson\Service\Encryption;
 
-class Exception extends \Exception
+class EncryptionException extends \Exception
 {
 
 

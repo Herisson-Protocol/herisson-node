@@ -9,10 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class GrabberCurlTest extends TestCase
 {
-    public function testummy()
-    {
-        $this->assertTrue(true);
-    }
 
     public function testGetContent()
     {

@@ -9,10 +9,6 @@ use PHPUnit\Framework\TestCase;
 
 class GrabberGuzzleTest extends TestCase
 {
-    public function testummy()
-    {
-        $this->assertTrue(true);
-    }
 
     public function testGetContent()
     {
@@ -26,7 +22,6 @@ class GrabberGuzzleTest extends TestCase
         // Then
         $this->assertEquals($expectedContent, $content);
     }
-
 
     public function testResponse()
     {

@@ -37,9 +37,9 @@ class FriendController extends HerissonController
      * @param Friend $friend
      * @param FriendProtocol $protocol
      * @return void
-     * @throws \Herisson\Service\Encryption\Exception
-     * @throws \Herisson\Service\Network\Exception
-     * @throws \Herisson\Service\Protocol\Exception
+     * @throws \Herisson\Service\Encryption\EncryptionException
+     * @throws \Herisson\Service\Network\NetworkException
+     * @throws \Herisson\Service\Protocol\ProtocolException
      */
     function askToFriendAction(Friend $friend, FriendProtocol $protocol) : Response
     {
@@ -57,9 +57,9 @@ class FriendController extends HerissonController
      * @param Friend $friend
      * @param FriendProtocol $protocol
      * @return void
-     * @throws \Herisson\Service\Encryption\Exception
-     * @throws \Herisson\Service\Network\Exception
-     * @throws \Herisson\Service\Protocol\Exception
+     * @throws \Herisson\Service\Encryption\EncryptionException
+     * @throws \Herisson\Service\Network\NetworkException
+     * @throws \Herisson\Service\Protocol\ProtocolException
      */
     function friendAskingAction(Request $request, FriendProtocol $protocol) : Response
     {
@@ -115,11 +115,11 @@ class FriendController extends HerissonController
      */
     function approveAction(Friend $friend, Message $message) : Response
     {
-            if ($friend->validateFriend()) {
-                $message->addSucces("Friend has been notified of your approvement");
-            } else {
-                $message->addError("Something went wrong while adding friendFriend has been notified of your approvement");
-            }
+        if ($friend->validateFriend()) {
+            $message->addSucces("Friend has been notified of your approvement");
+        } else {
+            $message->addError("Something went wrong while adding friendFriend has been notified of your approvement");
+        }
         // Redirect to Friends list
         return $this->redirectToRoute("admin.friend.index");
 
@@ -145,63 +145,6 @@ class FriendController extends HerissonController
         return $this->redirectToRoute('admin.friend.index');
     }
 
-    /**
-     * Action to edit a friend
-     *
-     * If POST method used, update the given friend with the POST parameters,
-     * otherwise just display the friend properties
-     *
-     * @return void
-     */
-    /*
-    function editActionOld()
-    {
-        $id = intval(param('id'));
-        if (!$id) {
-            $id = 0;
-        }
-        if (sizeof($_POST)) {
-            $url = post('url');
-            $alias = post('alias');
-
-            $new = $id == 0 ? true : false;
-            if ($new) {
-                $friend = new Friend();
-                $friend->is_active = 0;
-            } else {
-                $friend = FriendRepository::get($id);
-            }
-
-            $friend->alias = $alias;
-            $friend->url = $url;
-            if ($new) {
-                $friend->getInfo();
-                $friend->askForFriend();
-            }
-            $friend->save();
-            if ($new) { 
-                if ($new && $friend->is_active) {
-                    Message::i()->addSucces("Friend has been added and automatically validated");
-                } else {
-                    Message::i()->addSucces("Friend has been added, but needs to be validated by its owner");
-                }
-                // Return to list after creating new friend.
-                $this->indexAction();
-                $this->setView('index');
-                return;
-            } else {
-                Message::i()->addSucces("Friend saved");
-            }
-        }
-
-        if ($id == 0) {
-            $this->view->existing = new Friend();
-        } else {
-            $this->view->existing = FriendRepository::get($id);
-        }
-        $this->view->id = $id;
-    }
-    */
 
     /**
      * @Route("/admin/friend/edit/{id}", name="admin.friend.edit", requirements={"id":"\d+"})
@@ -287,22 +230,6 @@ class FriendController extends HerissonController
             ]
         );
     }
-
-    /**
-     * Action to import friends
-     *
-     * Not implemented yet
-     *
-     * @return void
-     */
-    /*
-    function importAction()
-    {
-        if ( !empty($_POST['login']) && !empty($_POST['password'])) {
-        }
-    }
-    */
-
 
 }
 

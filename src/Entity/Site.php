@@ -4,22 +4,31 @@
 namespace Herisson\Entity;
 
 
+use Herisson\Service\OptionLoader;
+
 class Site
 {
 
-    public $name;
+    public $sitename;
     public $email;
     public $publicKey;
     public $privateKey;
     public $siteurl;
-    public $basePath;
-    public $validFields = [
-        'name', 'email', 'publicKey', 'privateKey', 'siteurl', 'basePath'
+    public $sitepath;
+    public static $validFields = [
+        'sitename', 'email', 'publicKey', 'privateKey', 'siteurl', 'sitepath'
     ];
+
+    public static function createFromOptionLoader(OptionLoader $optionLoader)
+    {
+        $options = $optionLoader->load(static::$validFields);
+        return new Site($options);
+
+    }
 
     public function __construct(array $options)
     {
-        foreach ($this->validFields as $optionName) {
+        foreach (static::$validFields as $optionName) {
             if (! array_key_exists($optionName, $options)) {
                 continue;
             }
@@ -27,9 +36,9 @@ class Site
         }
     }
 
-    public function getSitePath()
+    public function getFullSitepath()
     {
-        return $this->siteurl."/".$this->basePath;
+        return $this->siteurl."/".$this->sitepath;
 
     }
 

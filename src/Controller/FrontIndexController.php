@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Herisson\Repository\BookmarkRepository;
 use Herisson\Service\OptionLoader;
-use Herisson\Service\Protocol\Exception as ProtocolException;
-use Herisson\Service\Encryption\Exception as EncryptionException;
+use Herisson\Service\Protocol\ProtocolException as ProtocolException;
+use Herisson\Service\Encryption\EncryptionException as EncryptionException;
 
 class FrontIndexController extends AbstractController
 {
@@ -228,32 +228,6 @@ class FrontIndexController extends AbstractController
         }
         exit;
     }
-
-
-    /**
-     * Action to handle the ask from another site
-     *
-     * TODO: Handle Grabber replies as Exceptions
-     *
-     * @return void
-     */
-    /*
-    function getAction()
-    {
-
-        if (!is_numeric($id)) {
-            return new Bookmark();
-        }
-        $bookmarks = Doctrine_Query::create()
-            ->from('Bookmark')
-            ->where("id=$id")
-            ->execute();
-        foreach ($bookmarks as $bookmark) {
-            return $bookmark;
-        }
-        return new Bookmark();
-    }
-    */
 
 
 

@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Friend[]    findAll()
  * @method Friend[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FriendRepository extends ServiceEntityRepository
+class FriendRepository extends ServiceEntityRepository implements FriendRepositoryInterface
 {
     private $registry;
     public function __construct(ManagerRegistry $registry)

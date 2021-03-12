@@ -2,7 +2,7 @@
 
 namespace Herisson\Service\Network;
 
-class Exception extends \Exception
+class NetworkException extends \Exception
 {
 
 }

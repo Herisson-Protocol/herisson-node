@@ -12,9 +12,9 @@
             <th style="width: 15%">Official name</th>
             <th style="width: 25%">URL</th>
             <th style="width:  5%">Active</th>
-            <th style="width:  5%">Waiting for friend's validation</th>
-            <th style="width:  5%">Need your validation</th>
-            <th style="width: 10%">Action</th>
+            <th style="width:  5%">Validated by him</th>
+            <th style="width:  5%">Validated by us</th>
+            <th style="width: 10%" colspan="2">Actions</th>
         </tr>
         {% for friend in friends %}
         <tr>
@@ -36,10 +36,13 @@
                 {{ include('mixins/_badge_boolean.html.twig', {value:friend.isActive}) }}
             </td>
             <td>
-                {{ include('mixins/_badge_boolean.html.twig', {value:friend.isYouwant}) }}
+                {{ include('mixins/_badge_boolean.html.twig', {value:friend.isValidatedByHim }) }}
             </td>
             <td>
-                {% if friend.isWantsyou %}
+                {{ include('mixins/_badge_boolean.html.twig', {value:friend.isValidatedByUs }) }}
+            </td>
+            <td>
+                {% if friend.isValidatedByHim %}
                     <a class="btn btn-primary btn-success" href="{{ path('admin.friend.approve', {id: friend.id }) }}" onclick="if (confirm('Are you sure ? ')) { return true; } return false;">
                         Approve
                     </a>

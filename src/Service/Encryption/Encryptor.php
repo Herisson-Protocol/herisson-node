@@ -2,11 +2,15 @@
 
 namespace Herisson\Service\Encryption;
 
-use Herisson\Service\Encryption\Exception as EncryptionException;
+use Herisson\Service\Encryption\EncryptionException as EncryptionException;
 
 class Encryptor
 {
 
+    public $publicKeyHeader = "-----BEGIN PUBLIC KEY-----\n";
+    public $publicKeyFooter = "\n-----END PUBLIC KEY-----";
+    public $privateKeyHeader = "-----BEGIN PRIVATE KEY-----\n";
+    public $privateKeyFooter = "\n-----END PRIVATE KEY-----";
 
     /**
      * Encryptor method for long data
@@ -41,7 +45,32 @@ class Encryptor
         $chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         return substr(str_shuffle($chars), 0, $length);
     }
+    /*
 
+    private function isValidPrivateKey($key) {
+        return preg_match("/".$this->privateKeyHeader."/", $key) && preg_match("/".$this->privateKeyFooter."/", $key);
+    }
+
+    private function formatPrivateKey($key)
+    {
+        if ($this->isValidPrivateKey($key)) {
+            return $key;
+        }
+        return $this->privateKeyHeader. wordwrap($key, 64, "\n", true) . $this->privateKeyFooter;
+    }
+
+    private function isValidPublicKey($key) {
+        return preg_match("/".$this->publicKeyHeader."/", $key) && preg_match("/".$this->publicKeyFooter."/", $key);
+    }
+
+    private function formatPublicKey($key)
+    {
+        if ($this->isValidPublicKey($key)) {
+            return $key;
+        }
+        return $this->publicKeyHeader. wordwrap($key, 64, "\n", true) . $this->publicKeyFooter;
+    }
+    */
     /**
      * Encrypt data using a public key
      *
@@ -86,7 +115,6 @@ class Encryptor
      */
     function privateEncrypt($data, $key) : string
     {
-
         if (!openssl_private_encrypt($data, $dataCrypted, $key)) {
             throw new EncryptionException(
                 'Error while encrypting with private key');
@@ -104,6 +132,8 @@ class Encryptor
      */
     function privateDecrypt($dataCrypted, $key) : string
     {
+        //print_r($this->formatPrivateKey($key));
+
         if (!openssl_private_decrypt(base64_decode($dataCrypted), $data, $key)) {
             throw new EncryptionException(
                 'Error while decrypting with private key');

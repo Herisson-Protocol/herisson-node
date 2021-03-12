@@ -4,7 +4,7 @@
 namespace Herisson\Service\Protocol;
 
 use Herisson\Service\Network\Response;
-use Herisson\Service\Protocol\Exception as ProtocolException;
+use Herisson\Service\Protocol\ProtocolException as ProtocolException;
 
 class HerissonProtocol
 {

@@ -22,6 +22,7 @@ wkhtmltoimage-i386
 .idea
 dump.sql
 run.sh
+build
 ###< Herisson ###
 
 
