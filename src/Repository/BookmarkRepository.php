@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Bookmark[]    findAll()
  * @method Bookmark[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class BookmarkRepository extends ServiceEntityRepository
+class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {

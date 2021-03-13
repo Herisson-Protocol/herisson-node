@@ -67,18 +67,23 @@ class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
      * @param string $url the URL to download
      *
      * @return Response the HTTP status
-     *@throws NetworkException
+     * @throws NetworkException
      */
     public function check(string $url) : Response
     {
-        $client = new Client();
-        $res = $client->request('HEAD', $url);
+        // Create a mock and queue two responses.
+        $mock = new MockHandler($this->responses);
 
-        $response = $this->createResponseFromGuzzle($url, $res);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack
+        ]);
 
-        $this->analyzeResponse($response);
+        $res = $client->request('HEAD', $url, [
+            'http_errors' => false
+        ]);
 
-        return $response;
+        return $this->createResponseFromGuzzle($url, $res);
+
     }
 
 

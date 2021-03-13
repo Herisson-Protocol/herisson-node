@@ -15,7 +15,7 @@ class FriendRepositoryMock implements FriendRepositoryInterface
     ];
 
 
-    public function createFriendFromData($friendData) : Friend
+    private function createFriendFromData($friendData) : Friend
     {
         $friend = new Friend();
         $friend->setId($friendData['id']);

@@ -35,7 +35,7 @@ class GrabberGuzzle extends AbstractGrabber implements GrabberInterface
 
         $response = $this->createResponseFromGuzzle($url, $res);
 
-        $this->analyzeResponse($response);
+        //$this->analyzeResponse($response);
         return $response;
     }
 
@@ -55,16 +55,18 @@ class GrabberGuzzle extends AbstractGrabber implements GrabberInterface
      * @param string $url the URL to download
      *
      * @return Response the HTTP status
-     *@throws NetworkException
+     * @throws NetworkException
      */
     public function check(string $url) : Response
     {
         $client = new Client();
-        $res = $client->request('HEAD', $url);
+        $res = $client->request('HEAD', $url, [
+            'http_errors' => false
+        ]);
 
         $response = $this->createResponseFromGuzzle($url, $res);
 
-        $this->analyzeResponse($response);
+        //$this->analyzeResponse($response);
 
         return $response;
     }

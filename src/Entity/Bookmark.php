@@ -4,12 +4,14 @@ namespace Herisson\Entity;
 
 use Herisson\Repository\BookmarkRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Herisson\Service\Network\GrabberInterface;
 
 /**
  * @ORM\Entity(repositoryClass=BookmarkRepository::class)
  */
 class Bookmark
 {
+    const FAVICON_URL = 'favicon.ico';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -147,6 +149,16 @@ class Bookmark
         return $this;
     }
 
+    public function calculateRootFaviconUrl()
+    {
+        $parsedUrl = parse_url($this->getUrl());
+
+        // We try to guess and get /favicon.ico
+        return $parsedUrl['scheme'].'://'.$parsedUrl['host']."/favicon.ico";
+        // We try to use google caching system.
+        //$possibleFavicons[] = "http://www.google.com/s2/favicons?domain=".$parsedUrl['host'];
+    }
+
     public function getFaviconUrl(): ?string
     {
         return $this->favicon_url;
@@ -261,6 +273,11 @@ class Bookmark
     public $screenshotSmall  = "_screenshot_small.png";
     public $screenshotSmall0 = "_screenshot_small-0.png";
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $is_active;
+
 
 
     /**
@@ -304,6 +321,7 @@ class Bookmark
     {
         $this->url = $url;
         $this->setHashFromUrl();
+        $this->setFaviconUrl($this->calculateRootFaviconUrl());
         // $this->checkUrl();
 
         return $this;
@@ -335,20 +353,6 @@ class Bookmark
      *   Maintenance   *
      *******************/
 
-    /**
-     * Check the bookmark url, and set the error attribute it the bookmark doesn't exists anymore
-     *
-     * @return void
-     */
-    public function checkUrl()
-    {
-        $network = new Network();
-        $status = $network->check($this->url);
-        if ($status['error']) {
-            $this->error = 1;
-        }
-    }
-
 
     /**
      * Start maintenance for this bookmark
@@ -367,7 +371,7 @@ class Bookmark
      */
     public function maintenance($verbose=true)
     {
-        $this->checkUrl();
+        //$this->checkUrl();
         $this->setHashFromUrl();
         $this->getContentFromUrl($verbose);
         $this->getTitleFromContent($verbose);
@@ -386,7 +390,7 @@ class Bookmark
      */
     public function setHashFromUrl()
     {
-        $this->_set('hash', md5($this->url));
+        $this->setHash(md5($this->getUrl()));
     }
 
 
@@ -990,5 +994,17 @@ class Bookmark
     public function save(Doctrine_Connection $conn = null)
     {
         $this->setHashFromUrl();
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->is_active;
+    }
+
+    public function setIsActive(bool $is_active): self
+    {
+        $this->is_active = $is_active;
+
+        return $this;
     }
 }
