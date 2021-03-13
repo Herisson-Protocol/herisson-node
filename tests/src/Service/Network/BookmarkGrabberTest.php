@@ -11,9 +11,13 @@ use PHPUnit\Framework\TestCase;
 
 class BookmarkGrabberTest extends TestCase
 {
-    public $fakeContent = "Dummy fake page content";
+    public $fakeContent = "<html><head><title>Vous Etes Perdu ?</title></head><body><h1>Perdu sur l'Internet ?</h1><h2>Pas de panique, on va vous aider</h2><strong><pre>    * <----- vous &ecirc;tes ici</pre></strong></body></html>";
     public $fakeUrl = "http://www.example.org";
     public $fakeFaviconUrl = "http://www.example.org/favicon.ico";
+    public $fakeTitle = "Vous Etes Perdu ?";
+    public $fakeContentType = "fake/html";
+
+
     /**
      * @var Bookmark
      */
@@ -40,7 +44,7 @@ class BookmarkGrabberTest extends TestCase
     {
         // Given
         $responses = [
-            new Response(200, ['Content-Type' => 'text/html'], $this->fakeContent)
+            new Response(200, ['Content-Type' => $this->fakeContentType], $this->fakeContent)
         ];
         $this->grabber->setResponses($responses);
         $bookmarkGrabber = new BookmarkGrabber($this->grabber);
@@ -48,8 +52,55 @@ class BookmarkGrabberTest extends TestCase
         $bookmarkGrabber->loadContent($this->bookmark);
         // Then
         $this->assertEquals($this->fakeContent, $this->bookmark->getContent());
+        $this->assertEquals($this->fakeContentType, $this->bookmark->getContentType());
     }
 
+
+    public function testLoadBookmarkTitleFromContent()
+    {
+        // Given
+        $responses = [
+            new Response(200, ['Content-Type' => 'text/html'], $this->fakeContent)
+        ];
+        $this->grabber->setResponses($responses);
+        $bookmarkGrabber = new BookmarkGrabber($this->grabber);
+        // When
+        $bookmarkGrabber->loadContent($this->bookmark);
+        $bookmarkGrabber->loadTitleFromContentIfNecessary($this->bookmark);
+        // Then
+        $this->assertEquals($this->fakeTitle, $this->bookmark->getTitle());
+    }
+
+
+    public function testLoadBookmarkTitleFromContentFromScratch()
+    {
+        // Given
+        $responses = [
+            new Response(200, ['Content-Type' => 'text/html'], $this->fakeContent)
+        ];
+        $this->grabber->setResponses($responses);
+        $bookmarkGrabber = new BookmarkGrabber($this->grabber);
+        // When
+        $bookmarkGrabber->loadTitleFromContentIfNecessary($this->bookmark);
+        // Then
+        $this->assertEquals($this->fakeTitle, $this->bookmark->getTitle());
+    }
+
+    public function testDontLoadBookmarkTitleFromContentIfTitleExists()
+    {
+        // Given
+        $responses = [
+            new Response(200, ['Content-Type' => 'text/html'], $this->fakeContent)
+        ];
+        $this->grabber->setResponses($responses);
+        $bookmarkGrabber = new BookmarkGrabber($this->grabber);
+        $existingTitle = "Already existing title";
+        $this->bookmark->setTitle($existingTitle);
+        // When
+        $bookmarkGrabber->loadTitleFromContentIfNecessary($this->bookmark);
+        // Then
+        $this->assertEquals($existingTitle, $this->bookmark->getTitle());
+    }
 
     public function dataProviderUrlIsActive() : array
     {

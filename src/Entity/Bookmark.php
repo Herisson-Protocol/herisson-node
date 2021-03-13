@@ -60,9 +60,19 @@ class Bookmark
     private $is_public;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $is_binary;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $content_image;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $content_type;
 
     /**
      * @ORM\Column(type="integer")
@@ -149,6 +159,19 @@ class Bookmark
         return $this;
     }
 
+
+    public function getContentType(): ?string
+    {
+        return $this->content_type;
+    }
+
+    public function setContentType(?string $content_type): self
+    {
+        $this->content_type = $content_type;
+
+        return $this;
+    }
+
     public function calculateRootFaviconUrl()
     {
         $parsedUrl = parse_url($this->getUrl());
@@ -191,6 +214,18 @@ class Bookmark
     public function setIsPublic(bool $is_public): self
     {
         $this->is_public = $is_public;
+
+        return $this;
+    }
+
+    public function getIsBinary(): ?bool
+    {
+        return $this->is_binary;
+    }
+
+    public function setIsBinary(bool $is_binary): self
+    {
+        $this->is_binary = $is_binary;
 
         return $this;
     }
@@ -395,37 +430,6 @@ class Bookmark
 
 
     /**
-     * Parse page title from HTML content
-     *
-     * This method does nothing in the following cases:
-     * - there is no content yet
-     * - the title already exists
-     * - it's a binary bookmark
-     *
-     * @param boolean $verbose flag to set mode verbose (default true)
-     *
-     * @return true if title was newly found, false otherwise
-     */
-    public function getTitleFromContent($verbose=true)
-    {
-        if (!$this->content || $this->title) {
-            return false;
-        }
-        if ($this->is_binary) {
-            return false; 
-        }
-        if (preg_match("#<title>([^<]*)</title>#", $this->content, $match)) {
-            $this->title = $match[1];
-            if ($verbose) {
-                Message::i()->addSucces(sprintf("Setting title : %s", $this->title));
-            }
-            return true;
-        }
-        return false;
-    }
-
-
-    /**
      * Parse HTML Content to get Favicon URL
      *
      * This method does nothing in the following cases:
@@ -520,49 +524,6 @@ class Bookmark
             return true;
         } catch (Network\Exception $e) {
             Message::i()->addError($e->getMessage());
-        }
-        return false;
-    }
-
-
-    /**
-     * Get HTML content from URL
-     *
-     * Retrieve content via Curl simple HTTP request
-     * Do nothing if the bookmark has $this->error=1
-     *
-     * @param boolean $verbose flag to set mode verbose (default true)
-     *
-     * @return true if the content is retrieve succesfully
-     */
-    public function getContentFromUrl($verbose=true)
-    {
-        $options = get_option('HerissonOptions');
-        if (! $options['spiderOptionTextOnly']) {
-            return false;
-        }
-        if ($this->error) {
-            return false;
-        }
-        if (!$this->content) {
-            $network = new Network();
-            try {
-                $content = $network->download($this->url);
-                $this->_set('content_type', $content['type']);
-                if (preg_match('#^text#', $content['type'])) {
-                    $this->_set('content', $content['data']);
-                    if ($verbose) {
-                        Message::i()->addSucces("Setting content from URL");
-                    }
-                } else {
-                    $this->saveBinary($content);
-                }
-                return true;
-                //$this->save();
-            } catch (Network\Exception $e) {
-                Message::i()->addError($e->getMessage());
-                return false;
-            }
         }
         return false;
     }
