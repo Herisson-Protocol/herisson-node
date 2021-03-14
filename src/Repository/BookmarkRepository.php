@@ -3,7 +3,6 @@
 namespace Herisson\Repository;
 
 use Herisson\Entity\Bookmark;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -12,41 +11,14 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Bookmark[]    findAll()
  * @method Bookmark[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepositoryInterface
+class BookmarkRepository extends HerissonRepository implements BookmarkRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Bookmark::class);
     }
 
-    // /**
-    //  * @return Bookmark[] Returns an array of Bookmark objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Bookmark
-    {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
     /**
      * Check if the given url already exists in the bookmark database
      *
@@ -90,10 +62,12 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
      *
      * @return integer the number of total bookmarks
      */
+    /*
     public static function countAll()
     {
         return self::countWhere("1=1");
     }
+    */
 
     /**
      * Count the bookmarks with a specific condition
@@ -103,6 +77,7 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
      *
      * @return integer the number of bookmarks matching the condition
      */
+    /*
     public static function countWhere($where, $values=array())
     {
         $bookmarks = Doctrine_Query::create()
@@ -112,6 +87,7 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
             ->execute($values, Doctrine_Core::HYDRATE_NONE);
         return $bookmarks[0][0];
     }
+    */
 
 
     /**
@@ -121,10 +97,12 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
      * 
      * @return a list of all Bookmarks object
      */
+    /*
     public static function getAll($paginate=false)
     {
         return self::getWhere("1=1", null, $paginate);
     }
+    */
 
 
     /**
@@ -195,10 +173,12 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
      *
      * @return the list of matching bookmark objects
      */
+    /*
     public static function getTag($tag, $paginate=false)
     {
         return self::getWhere("t.name = ?", $tag, $paginate);
     }
+    */
 
 
     /**
@@ -210,6 +190,7 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
      *
      * @return the list of matching bookmark objects
      */
+    /*
     public static function getWhere($where, $values, $paginate=false)
     {
         $q = Doctrine_Query::create()
@@ -223,12 +204,14 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
         $bookmarks = $q->execute($values);
         return $bookmarks;
     }
+    */
 
     /**
      * Truncate the table, delete all bookmarks from database
      *
      * @return void
      */
+    /*
     public static function truncate()
     {
         $bookmarks = self::getAll();
@@ -236,6 +219,7 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
             $bookmark->delete();
         }
     }
+    */
 
 
     /**
@@ -280,10 +264,12 @@ class BookmarkRepository extends ServiceEntityRepository implements BookmarkRepo
      */
     public static function getTableSize()
     {
+        /*
         $res = Doctrine::execute("SHOW TABLE STATUS Where Name like '%_bookmarks'");
         $tableInfo = $res->fetch();
         $size = $tableInfo['Data_length'];
         return Folder::formatSize($size);
+        */
     }
 
 }

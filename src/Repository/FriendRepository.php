@@ -12,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Friend[]    findAll()
  * @method Friend[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FriendRepository extends ServiceEntityRepository implements FriendRepositoryInterface
+class FriendRepository extends HerissonRepository implements FriendRepositoryInterface
 {
     private $registry;
     public function __construct(ManagerRegistry $registry)
@@ -26,35 +26,6 @@ class FriendRepository extends ServiceEntityRepository implements FriendReposito
 
         $this->registry->remove($friend);
     }
-
-    // /**
-    //  * @return Friend[] Returns an array of Friend objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Friend
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 
     /**
      * Get the Friend match the id

@@ -9,7 +9,7 @@ use Herisson\Service\Network\GrabberInterface;
 /**
  * @ORM\Entity(repositoryClass=BookmarkRepository::class)
  */
-class Bookmark
+class Bookmark implements HerissonEntityInterface
 {
     const FAVICON_URL = 'favicon.ico';
     /**
@@ -98,6 +98,13 @@ class Bookmark
      * @ORM\Column(type="integer", nullable=true)
      */
     private $type_id;
+
+    public static function createFromUrl($url) : Bookmark
+    {
+        $bookmark = new Bookmark();
+        $bookmark->setUrl($url);
+        return $bookmark;
+    }
 
     public function getId(): ?int
     {
@@ -954,6 +961,7 @@ class Bookmark
      */
     public function save(Doctrine_Connection $conn = null)
     {
+
         $this->setHashFromUrl();
     }
 

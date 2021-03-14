@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=FriendRepository::class)
  */
-class Friend
+class Friend implements HerissonEntityInterface
 {
     /**
      * @ORM\Id

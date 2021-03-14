@@ -153,16 +153,13 @@ class Encryptor
      *
      * @return array an array with 'data' => the encrypted data, 'hash' => the encrypted hash
      */
-    function publicEncryptLongData($data, $key=null)
+    function publicEncryptLongData($data, $publicKey) : CipheredData
     {
-        if (is_null($key)) {
-            $key = $this->public;
-        }
         $hash = $this->hash($data);
 
         $iv = $this->createIV();
 
-        if (!openssl_public_encrypt($hash, $hash_crypted, $key)) {
+        if (!openssl_public_encrypt($hash, $hash_crypted, $publicKey)) {
             throw new EncryptionException(
                 'Error while encrypting hash with public key');
         }
@@ -173,11 +170,7 @@ class Encryptor
                 'Error while encrypting long data with encryption method');
         }
 
-        return array(
-            'data'  => base64_encode($data_crypted),
-            'hash'  => base64_encode($hash_crypted),
-            'iv'    => base64_encode($iv),
-        );
+        return new CipheredData($data_crypted, $hash_crypted, $iv);
     }
 
 
@@ -195,18 +188,16 @@ class Encryptor
      *
      * @return string the decrypted data
      */
-    public function publicDecryptLongData($data_crypted, $hash_crypted, $iv, $key=null)
+    public function publicDecryptLongData(CipheredData $cipheredData, $publicKey)
     {
-        if (is_null($key)) {
-            $key = $this->public;
-        }
 
-        if (!openssl_public_decrypt(base64_decode($hash_crypted), $hash, $key)) {
+
+        if (!openssl_public_decrypt($cipheredData->hash, $hash, $publicKey)) {
             throw new EncryptionException(
                 'Error while decrypting hash with public key');
         }
 
-        if (!($data = openssl_decrypt(base64_decode($data_crypted), self::$method, $hash, 0, base64_decode($iv)))) {
+        if (!($data = openssl_decrypt($cipheredData->data, self::$method, $hash, 0, $cipheredData->iv))) {
             throw new EncryptionException(
                 'Error while encrypting long data with encryption method');
         }
@@ -232,16 +223,13 @@ class Encryptor
      *
      * @return array an array with 'data' => the encrypted data, 'hash' => the encrypted hash
      */
-    public function privateEncryptLongData($data, $key=null) : array
+    public function privateEncryptLongData($data, $privateKey) : CipheredData
     {
-        if (is_null($key)) {
-            $key = $this->private;
-        }
         $hash = $this->hash($data);
 
         $iv = $this->createIV();
 
-        if (!openssl_private_encrypt($hash, $hash_crypted, $key)) {
+        if (!openssl_private_encrypt($hash, $hash_crypted, $privateKey)) {
             throw new EncryptionException(
                 'Error while encrypting hash with private key');
         }
@@ -252,11 +240,7 @@ class Encryptor
                 'Error while encrypting long data with encryption method');
         }
 
-        return array(
-            'data'  => base64_encode($data_crypted),
-            'hash'  => base64_encode($hash_crypted),
-            'iv'    => base64_encode($iv),
-        );
+        return new CipheredData($data_crypted, $hash_crypted, $iv);
     }
 
 
@@ -274,18 +258,15 @@ class Encryptor
      *
      * @return string the decrypted data
      */
-    public function privateDecryptLongData($data_crypted, $hash_crypted, $iv, $key=null) : string
+    public function privateDecryptLongData(CipheredData $cipheredData, $privateKey) : string
     {
-        if (is_null($key)) {
-            $key = $this->private;
-        }
 
-        if (!openssl_private_decrypt(base64_decode($hash_crypted), $hash, $key)) {
+        if (!openssl_private_decrypt($cipheredData->hash, $hash, $privateKey)) {
             throw new EncryptionException(
                 'Error while decrypting hash with private key');
         }
 
-        if (!($data = openssl_decrypt(base64_decode($data_crypted), self::$method, $hash, 0, base64_decode($iv)))) {
+        if (!($data = openssl_decrypt($cipheredData->data, self::$method, $hash, 0, $cipheredData->iv))) {
             throw new EncryptionException(
                 'Error while encrypting long data with encryption method');
         }

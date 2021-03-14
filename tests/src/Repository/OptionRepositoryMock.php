@@ -4,11 +4,13 @@
 namespace Herisson\Repository;
 
 
+use Herisson\Entity\HerissonEntityInterface;
 use Herisson\Entity\Option;
 
-class OptionRepositoryMock implements OptionRepositoryInterface
+class OptionRepositoryMock extends HerissonRepositoryMock implements OptionRepositoryInterface
 {
-    public $optionNames = [
+    protected $fields = ['id', 'name', 'value'];
+    protected $objects = [
         1 => ['id' => 1, 'name' => 'sitename', 'value' => 'HerissonSite'],
         2 => ['id' => 2, 'name' => 'email', 'value' => 'admin@example.org'],
         3 => ['id' => 3, 'name' => 'publicKey', 'value' => '-- BEGIN PUBLIC KEY -- '],
@@ -17,48 +19,13 @@ class OptionRepositoryMock implements OptionRepositoryInterface
         6 => ['id' => 6, 'name' => 'basePath', 'value' => 'bookmarks'],
     ];
 
-    /**
-     * OptionRepositoryMock constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    public function createOptionFromData($optionData) : Option
+    public function createFromData($objectData) : HerissonEntityInterface
     {
         $option = new Option();
-        $option->setId($optionData['id']);
-        $option->setName($optionData['name']);
-        $option->setValue($optionData['value']);
+        $option->setId($objectData['id']);
+        $option->setName($objectData['name']);
+        $option->setValue($objectData['value']);
         return $option;
     }
-    public function find($id)
-    {
-        $optionData = $this->optionNames[$id];
-        return $this->createOptionFromData($optionData);
-    }
 
-    public function findAll()
-    {
-        $options = [];
-        foreach ($this->optionNames as $optionData) {
-            $options[] = $this->createOptionFromData($optionData);
-        }
-        return $options;
-    }
-
-    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
-    {
-
-    }
-
-    public function findOneBy(array $criteria)
-    {
-
-    }
-
-    public function getClassName()
-    {
-
-    }
 }

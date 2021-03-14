@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=OptionRepository::class)
  * @ORM\Table(name="`option`")
  */
-class Option
+class Option implements HerissonEntityInterface
 {
     /**
      * @ORM\Id
