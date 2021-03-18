@@ -179,13 +179,36 @@ class Bookmark implements HerissonEntityInterface
         return $this;
     }
 
+    public function getUrlPath()
+    {
+        $default = "index.html";
+        $parsedUrl = parse_url($this->getUrl());
+        if (array_key_exists('path', $parsedUrl)) {
+            $filename = ltrim($parsedUrl['path'], '/');
+            if (!$filename) {
+                $filename = $default;
+            }
+        } else {
+            $filename = $default;
+        }
+        return $filename; //
+
+    }
+
     public function calculateRootFaviconUrl()
     {
         $parsedUrl = parse_url($this->getUrl());
-
         // We try to guess and get /favicon.ico
         return $parsedUrl['scheme'].'://'.$parsedUrl['host']."/favicon.ico";
         // We try to use google caching system.
+        //$possibleFavicons[] = "http://www.google.com/s2/favicons?domain=".$parsedUrl['host'];
+    }
+
+
+    public function calculateRootUrl()
+    {
+        $parsedUrl = parse_url($this->getUrl());
+        return $parsedUrl['scheme'].'://'.$parsedUrl['host'];
         //$possibleFavicons[] = "http://www.google.com/s2/favicons?domain=".$parsedUrl['host'];
     }
 
@@ -834,32 +857,11 @@ class Bookmark implements HerissonEntityInterface
      * Get the dirname of bookmark files
      *
      * @return string the dirname
-     */
-    public function getDir()
-    {
-        return HERISSON_DATA_DIR.$this->getHashDir();
-    }
-
-
-    /**
-     * Create the bookmark dir of the bookmark files
      *
-     * @return boolean true if the directory was succesfully created, false otherwise
      */
-    public function createDir()
+    public function getDir(string $exportDir = "/tmp")
     {
-        if (!file_exists($this->getDir())) {
-            // Create dir recursively
-            mkdir($this->getDir(), 0775, true);
-            return true;
-        } else if (file_exists($this->getDir()) && !is_dir($this->getDir())) {
-            Message::i()->addError("Can't create directory ".$this->getDir().". A file already exists");
-            return false;
-        } else if (!is_writeable($this->getDir())) {
-            Message::i()->addError("Directory ".$this->getDir()." exists, but is not writable.");
-            return false;
-        }
-        return true;
+        return preg_replace("#//+#", "/", $exportDir."/".$this->getHashDir());
     }
 
 
@@ -870,11 +872,11 @@ class Bookmark implements HerissonEntityInterface
      * Eg with the hash : 098f6bcd4621d373cade4e832627b4f6
      * Dirname will be 0/09/098f6bcd4621d373cade4e832627b4f6
      *
-     * @return the dirname of the hash
+     * @return string the dirname of the hash
      */
     public function getHashDir()
     {
-        $this->setHashFromUrl();
+        //$this->setHashFromUrl();
         return substr($this->hash, 0, 1)."/".substr($this->hash, 0, 2)."/".$this->hash;
     }
 
@@ -943,9 +945,9 @@ class Bookmark implements HerissonEntityInterface
     /**
      * Get the filename of the full content file
      *
-     * @return the filename for full content
+     * @return string the filename for full content
      */
-    public function getFullContentFile()
+    public function getFullContentFile() : string
     {
         return $this->getDir()."/index.html";
 

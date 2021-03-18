@@ -37,7 +37,18 @@ services:
         #calls:
         #    - [setContainer, ["@service_container"]]
 
+
+    Herisson\Repository\BookmarkRepository:
+        arguments:
+            - '@Doctrine\Common\Persistence\ManagerRegistry'
+            - Herisson\Entity\Bookmark
+
+
+
     Herisson\Service\Network\GrabberInterface: '@Herisson\Service\Network\GrabberGuzzle'
+    Herisson\Repository\BookmarkRepositoryInterface: '@Herisson\Repository\BookmarkRepository'
+    Herisson\Repository\HerissonRepositoryInterface : '@Herisson\Repository\BookmarkRepository'
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

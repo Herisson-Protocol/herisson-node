@@ -3,10 +3,11 @@
 
 namespace Herisson\Service\System;
 
+
 use Herisson\Entity\Bookmark;
 use PHPUnit\Framework\TestCase;
 
-class BookmarkSaverTest extends TestCase
+class SaverTest extends TestCase
 {
     /**
      * @var SaverInterface
@@ -18,33 +19,26 @@ class BookmarkSaverTest extends TestCase
         $this->saver = new SaverMock();
     }
 
-    public function testDummy()
-    {
-        $this->assertTrue(true);
-    }
-
-    public function testSaveBookmarkAndHasContent()
+    public function testSaveBookmark()
     {
         $expectedContent = "Hello World";
         $bookmark = new Bookmark();
         $bookmark->setUrl("http://www.example.org");
         $bookmark->setContent($expectedContent);
-
-        $bookmarkSaver = new BookmarkSaver($this->saver);
-        $bookmarkSaver->saveBookmark($bookmark);
-        $this->assertTrue($bookmarkSaver->bookmarkHasContent($bookmark));
+        $this->saver->save($bookmark);
+        $content = $this->saver->read($bookmark);
+        $this->assertEquals($expectedContent, $content);
     }
 
-    public function testSaveBookmarkAndGetSize()
+    public function testGetDataSizeBookmark()
     {
         $expectedContent = "Hello World";
         $bookmark = new Bookmark();
         $bookmark->setUrl("http://www.example.org");
         $bookmark->setContent($expectedContent);
-        $bookmarkSaver = new BookmarkSaver($this->saver);
-        $bookmarkSaver->saveBookmark($bookmark);
-        $this->assertEquals(strlen($expectedContent), $bookmarkSaver->getBookmarkSize($bookmark));
+        $this->saver->save($bookmark);
+        $contentSize = $this->saver->getDataSize($bookmark);
+        $this->assertEquals(strlen($expectedContent), $contentSize);
     }
-
 
 }

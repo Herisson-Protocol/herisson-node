@@ -13,6 +13,8 @@ class AddBookmark
 
     public function __construct(BookmarkRepositoryInterface $repository)
     {
+        //\Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository::__construct();
+        //" is type-hinted "string", you should configure its value explicitly.
         $this->repository = $repository;
     }
 

@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
 
+
 services:
   # default configuration for services in *this* file
   _defaults:
@@ -32,12 +33,61 @@ services:
     #    - [setContainer, ["@service_container"]]
 
   Herisson\Service\:
-    resource: '../src/Service/'
+    resource:
+      - '../src/Service/'
+#      - '../src/Repository/'
+      - '../tests/src/Service/'
     tags: ['controller.service_arguments']
     #calls:
     #    - [setContainer, ["@service_container"]]
 
+
+  Herisson\Repository\BookmarkRepository:
+    arguments:
+      - '@Doctrine\Common\Persistence\ManagerRegistry'
+      - Herisson\Entity\Bookmark
+
+
   Herisson\Service\Network\GrabberInterface: '@Herisson\Service\Network\GrabberGuzzleMock'
+  Herisson\Repository\BookmarkRepositoryInterface: '@Herisson\Repository\BookmarkRepositoryMock'
+
+
+#bookmark_repository:
+#  class: Herisson\Repository\BookmarkRepositoryInterface
+#  factory: ["@doctrine", getRepository]
+#  arguments:
+#    - '@Herisson\Repository\BookmarkRepository'
+
+
+#use_cases:
+#  class: Herisson\Repository\BookmarkRepositoryInterface
+#  arguments:
+#    - "@bookmark_repository"
+
+
+#  Herisson\Repository\BookmarkRepository:
+#    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+#    arguments:
+#      - Herisson\Entity\Bookmark
+
+#  Herisson\Repository\HerissonRepository:
+#    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+#    arguments:
+#      - Herisson\Entity\Bookmark
+
+
+#  Herisson\Repository\:
+#    resource: '../src/Repository/'
+#    tags: ['controller.service_arguments']
+#    #calls:
+#    #    - [setContainer, ["@service_container"]]
+
+
+#  Herisson\UseCase\:
+#    resource: '../src/UseCase/'
+#    tags: ['controller.service_arguments']
+#    #calls:
+#    #    - [setContainer, ["@service_container"]]
 
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones

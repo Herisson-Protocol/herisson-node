@@ -2,8 +2,10 @@
 
 namespace Herisson\Repository;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Herisson\Entity\Bookmark;
 use Doctrine\Persistence\ManagerRegistry;
+use Herisson\Entity\HerissonEntityInterface;
 
 /**
  * @method Bookmark|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,7 +19,14 @@ class BookmarkRepository extends HerissonRepository implements BookmarkRepositor
     {
         parent::__construct($registry, Bookmark::class);
     }
-
+/*
+    public function save(HerissonEntityInterface $entity)
+    {
+        $em = $this->getEntityManager();
+        $em->persist($entity);
+        $em->flush();
+    }
+*/
 
     /**
      * Check if the given url already exists in the bookmark database

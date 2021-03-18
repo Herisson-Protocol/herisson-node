@@ -16,10 +16,6 @@ use PHPUnit\Framework\TestCase;
 class AskForFriendTest extends TestCase
 {
 
-    public function testDummy()
-    {
-        $this->assertTrue(true);
-    }
 
     public function testExecute()
     {

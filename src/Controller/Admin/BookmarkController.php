@@ -6,8 +6,13 @@ use Herisson\Repository\BookmarkRepository;
 use Herisson\Entity\Bookmark;
 use Herisson\Repository\TagRepository;
 use Herisson\Pagination;
+use Herisson\Service\Network\GrabberInterface;
+use Herisson\Service\System\SaverInterface;
+use Herisson\UseCase\Bookmark\LoadAllBookmarkData;
+use Herisson\UseCase\Bookmark\LoadAllBookmarkDataRequest;
+use Herisson\UseCase\Bookmark\LoadAllBookmarkDataResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Component\Routing\Annotation\Route;
 
 
 class BookmarkController extends AbstractController
@@ -125,6 +130,24 @@ class BookmarkController extends AbstractController
         $this->view->pagination = Pagination::i()->getVars();
     }
 
+    /**
+     * @Route("/admin/bookmark/download/", name="admin.bookmark.download")
+     */
+    public function loadAllBookmark(GrabberInterface $grabber, SaverInterface $saver)
+    {
+        $bookmark = Bookmark::createFromUrl("http://www.perdu.com");
+
+        // When
+        //$repo = new BookmarkRepositoryMock();
+        $request = new LoadAllBookmarkDataRequest($bookmark);
+        $response = new LoadAllBookmarkDataResponse();
+        $usecase = new LoadAllBookmarkData($grabber, $saver);
+        $usecase->execute($request, $response);
+
+        return $response;
+
+
+    }
     /**
      * Action to display the tags list
      *

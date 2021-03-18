@@ -6,7 +6,7 @@ namespace Herisson\Service\System;
 
 use Herisson\Entity\Bookmark;
 
-class BookmarkSaverMock implements BookmarkSaverInterface
+class SaverMock implements SaverInterface
 {
 
     public $bookmarkData = [];

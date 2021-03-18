@@ -9,7 +9,8 @@ class CipheredData
     public $data;
     public $hash;
     public $iv;
-    public function __construct($data, $hash, $iv)
+
+    public function __construct(string $data = "", string $hash = "", string $iv = "")
     {
         $this->data = $data;
         $this->hash = $hash;
