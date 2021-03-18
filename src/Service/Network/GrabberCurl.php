@@ -66,7 +66,8 @@ class GrabberCurl extends AbstractGrabber implements GrabberInterface
         $content =  curl_exec($curl);
         $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
-        return new Response($url, $code, $contentType, $content);
+//        return new Response($url, $code, $contentType, $content);
+        return new Response($content, $code, ['Content-Type' => $contentType, 'X-Url' => $url]);
     }
 
     /**

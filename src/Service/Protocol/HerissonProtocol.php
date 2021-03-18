@@ -22,7 +22,7 @@ class HerissonProtocol
     public function dispatchResponse(Response $response, array $routing)
     {
 
-        $code = $response->getCode();
+        $code = $response->getStatusCode();
         if ($this->checkResponseProtocolIsImplemented($code, $routing)) {
             throw new ProtocolException("Response $code not expected");
         }

@@ -2,7 +2,7 @@
 
 namespace Herisson\Service\Network;
 
-class Response
+class Response extends \Symfony\Component\HttpFoundation\Response
 {
 
     public $content;
@@ -103,24 +103,23 @@ class Response
 
     /**
      * Response constructor.
-     * @param int $code
-     * @param string $type
-     * @param string $content
+     * @param string|null $content
+     * @param int $status
+     * @param array $headers
      */
-    public function __construct(string $url = "", int $code = 0, string $type = "", string $content = "")
+    public function __construct(?string $content = '', int $status = 200, array $headers = [])
     {
-        $this->url = $url;
-        $this->setCode($code);
-        $this->type = $type;
-        $this->content = $content;
+        parent::__construct($content, $status, $headers);
+        $this->calculateErrorStatus();
     }
+
 
     /**
      * @return string
      */
     public function getUrl(): string
     {
-        return $this->url;
+        return $this->headers->get('X-Url') ?? '';
     }
 
     /**
@@ -145,7 +144,7 @@ class Response
      * @param string $content
      * @return Response
      */
-    public function setContent(string $content) : self
+    public function setContent(?string $content) : self
     {
         $this->content = $content;
         return $this;
@@ -156,7 +155,7 @@ class Response
      */
     public function getType() : string
     {
-        return $this->type;
+        return $this->headers->get('Content-Type') ?? '';
     }
 
     /**
@@ -177,14 +176,9 @@ class Response
         return $this->code;
     }
 
-    /**
-     * @param int $code
-     * @return Response
-     */
-    public function setCode(int $code) : self
+    public function calculateErrorStatus(): object
     {
-        $this->code = $code;
-        if ($code >= 400) {
+        if ($this->getStatusCode() >= 400) {
             $this->setError(true);
         }
         return $this;

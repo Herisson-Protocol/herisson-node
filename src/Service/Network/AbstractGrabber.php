@@ -59,12 +59,12 @@ abstract class AbstractGrabber implements GrabberInterface
     }
     */
 
-    public function analyzeResponse($response)
+    public function analyzeResponse(Response $response)
     {
         if ($response->isError()) {
             throw new NetworkException(sprintf("The site %s returned a %s error (%s) : %s",
-                $response->getUrl(), $response->getCode(), $response->getMessage(), $response->getContent()),
-                $response->getCode());
+                $response->getUrl(), $response->getStatusCode(), $response->getMessage(), $response->getContent()),
+                $response->getStatusCode());
         }
     }
 

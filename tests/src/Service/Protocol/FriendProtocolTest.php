@@ -186,7 +186,7 @@ cQIDAQAB
         $response = $friendProtocol->handleFriendValidation($site, $friend, $signature);
 
         //Then
-        $this->assertEquals(200, $response->getCode());
+        $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($friend->getIsValidatedByHim());
         $this->assertFalse($friend->getIsActive());
     }
@@ -201,7 +201,7 @@ cQIDAQAB
         $site = $this->createSiteObject();
         $friend = new Friend();
         $response = $friendProtocol->handleFriendValidation($site, $friend, "");
-        $this->assertEquals(417, $response->getCode());
+        $this->assertEquals(417, $response->getStatusCode());
         $this->assertFalse($friend->getIsValidatedByHim());
         $this->assertFalse($friend->getIsActive());
     }

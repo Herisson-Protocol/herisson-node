@@ -99,7 +99,7 @@ class FriendProtocol extends HerissonProtocol
             'signature' => $signature
         ];
         $response = $this->grabber->getResponse($askUrl, $postData);
-        $code = $response->getCode();
+        $code = $response->getStatusCode();
 
         switch ($code) {
             case 200:
@@ -151,7 +151,7 @@ class FriendProtocol extends HerissonProtocol
             $publicKeyUrl = $friend->getActionUrl(static::PUBLICKEY_PATH);
             $response = $this->grabber->getResponse($publicKeyUrl);
 
-            $code = $response->getCode();
+            $code = $response->getStatusCode();
             switch ($code) {
                 case 200:
                     $friend->setPublicKey($response->getContent());
@@ -180,7 +180,7 @@ class FriendProtocol extends HerissonProtocol
         $infoUrl = $friend->getActionUrl(static::INFO_PATH);
         $response = $this->grabber->getResponse($infoUrl);
 
-        $code = $response->getCode();
+        $code = $response->getStatusCode();
         switch ($code) {
             case 200:
                 $jsonString = $response->getContent();
@@ -216,7 +216,7 @@ class FriendProtocol extends HerissonProtocol
             'url'       => $site->getFullSitepath(),
             'signature' => $signature
         );
-        switch ($response->getCode()) {
+        switch ($response->getStatusCode()) {
             case 200:
                 //$friend->setIsValidatedByHim(true);
                 $friend->setIsValidatedByUs(true);
@@ -240,14 +240,14 @@ class FriendProtocol extends HerissonProtocol
         try {
             $uncipheredUrl = $this->encryptor->publicDecrypt($signature, $friend->getPublicKey());
         } catch (EncryptionException $e) {
-            return new Response("", 417, "");
+            return new Response("", 417, []);
         }
 
         if ($friend->getUrl() == $uncipheredUrl) {
             $friend->setIsValidatedByUs(true);
-            return new Response("", 200, "");
+            return new Response("", 200, []);
         } else {
-            return new Response("", 417, "");
+            return new Response("", 417, []);
         }
     }
 
@@ -305,7 +305,7 @@ class FriendProtocol extends HerissonProtocol
             $content = $network->getResponse($this->url."/acceptsbackups", $postData);
             return intval($content['data']);
         } catch (\Herisson\Service\Network\NetworkException $e) {
-            switch ($e->getCode()) {
+            switch ($e->getStatusCode()) {
                 case 403:
                     return 0;
                     break;
@@ -313,7 +313,7 @@ class FriendProtocol extends HerissonProtocol
                     return 2;
                     break;
             }
-            return $e->getCode();
+            return $e->getStatusCode();
         }
     }
 
@@ -343,12 +343,12 @@ class FriendProtocol extends HerissonProtocol
             $content = $network->download($this->url."/sendbackup", $postData);
             return intval($content['data']);
         } catch (\Herisson\Service\Network\NetworkException $e) {
-            switch ($e->getCode()) {
+            switch ($e->getStatusCode()) {
                 case 417:
                     return 0;
                     break;
             }
-            return $e->getCode();
+            return $e->getStatusCode();
         }
     }
 
@@ -379,12 +379,12 @@ class FriendProtocol extends HerissonProtocol
             return $data;
 
         } catch (\Herisson\Service\Network\NetworkException $e) {
-            switch ($e->getCode()) {
+            switch ($e->getStatusCode()) {
                 case 417:
                     return 0;
                     break;
             }
-            return $e->getCode();
+            return $e->getStatusCode();
         }
     }
 
@@ -416,7 +416,7 @@ class FriendProtocol extends HerissonProtocol
                 return $bookmarks;
 
             } catch (Network\Exception $e) {
-                switch ($e->getCode()) {
+                switch ($e->getStatusCode()) {
                     case 404:
                         Message::i()->addError("This site is not a Herisson site or is closed.");
                         break;

@@ -34,7 +34,7 @@ class GrabberGuzzleTest extends TestCase
         // When
         $response = $grabber->getResponse($url);
         // Then
-        $this->assertEquals($expectedCode, $response->getCode());
+        $this->assertEquals($expectedCode, $response->getStatusCode());
         $this->assertEquals($expectedLength, $response->getLength());
     }
 
@@ -50,6 +50,6 @@ class GrabberGuzzleTest extends TestCase
         // When
         $response = $grabber->check($url);
         // Then
-        $this->assertEquals($expectedCode, $response->getCode());
+        $this->assertEquals($expectedCode, $response->getStatusCode());
     }
 }

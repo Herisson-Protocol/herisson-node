@@ -52,13 +52,14 @@ class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
         return $this->createResponseFromGuzzle($url, $res);
     }
 
-    public function createResponseFromGuzzle(string $url, ResponseInterface $guzzleResponse)
+    public function createResponseFromGuzzle(string $url, ResponseInterface $guzzleResponse) : Response
     {
         $code = $guzzleResponse->getStatusCode();
         $contentType = $guzzleResponse->getHeader('content-type')[0];
         $content = (string) $guzzleResponse->getBody();
 
-        return new Response($url, $code, $contentType, $content);
+        return new Response($content, $code, ['Content-Type' => $contentType, 'X-Url' => $url]);
+        //return new Response($url, $code, $contentType, $content);
     }
 
     /**
