@@ -55,7 +55,7 @@ class GrabberCurl extends AbstractGrabber implements GrabberInterface
 
         $response = $this->createResponseFromCurl($url, $curl);
 
-        $this->analyzeResponse($response);
+        //$this->analyzeResponse($response);
 
         curl_close($curl);
         return $response;

@@ -27,7 +27,7 @@ abstract class AbstractGrabber implements GrabberInterface
      */
     public function getContent(string $url, $post = []) : string
     {
-        return (string) $this->getResponse($url, $post);
+        return $this->getResponse($url, $post)->getContent();
     }
 
 
@@ -59,6 +59,7 @@ abstract class AbstractGrabber implements GrabberInterface
     }
     */
 
+    /*
     public function analyzeResponse(Response $response)
     {
         if ($response->isError()) {
@@ -67,6 +68,7 @@ abstract class AbstractGrabber implements GrabberInterface
                 $response->getStatusCode());
         }
     }
+    */
 
 
 }
