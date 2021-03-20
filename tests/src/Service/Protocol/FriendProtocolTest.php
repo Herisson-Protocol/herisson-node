@@ -33,9 +33,9 @@ grVH2JiLlbg/UOeKNivbQQ0JR1fU1AS/zoCu6foTcCoiXblxFVq+wBLV3xLPvY7O
 cQIDAQAB
 -----END PUBLIC KEY-----";
         $this->infos = [
-            'sitename' => 'HerissonTest',
-            'adminEmail' => 'admin@herisson.io',
-            'version' => 'v0.1',
+            Site::PARAM_SITENAME => 'HerissonTest',
+            Site::PARAM_EMAIL => 'admin@herisson.io',
+            Site::PARAM_VERSION => 'v0.1',
         ];
     }
 
@@ -80,20 +80,20 @@ cQIDAQAB
         // When
         $friendProtocol->getInfo($friend);
         // Then
-        $this->assertEquals($this->infos['adminEmail'], $friend->getEmail());
-        $this->assertEquals($this->infos['sitename'], $friend->getName());
+        $this->assertEquals($this->infos[Site::PARAM_EMAIL], $friend->getEmail());
+        $this->assertEquals($this->infos[Site::PARAM_SITENAME], $friend->getName());
     }
 
     public function createSiteObject() : Site
     {
         $key = KeyPair::generate();
         $options = [
-            'publicKey' => $key->getPublic(),
-            'privateKey' => $key->getPrivate(),
-            'siteurl' => 'http://localhost:8000',
-            'basePath' => '/',
-            'email' => 'admin@example.org',
-            'sitename' => 'Example.org',
+            Site::PARAM_PUBLICKEY => $key->getPublic(),
+            Site::PARAM_PRIVATEKEY => $key->getPrivate(),
+            Site::PARAM_SITEURL => 'http://localhost:8000',
+            Site::PARAM_SITEPATH => '/',
+            Site::PARAM_EMAIL => 'admin@example.org',
+            Site::PARAM_SITENAME => 'Example.org',
         ];
         return new Site($options);
     }

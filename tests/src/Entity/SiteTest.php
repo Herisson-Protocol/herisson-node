@@ -15,22 +15,22 @@ class SiteTest extends TestCase
     {
         // Given
         $options = [
-            'sitename' => 'DummyName',
-            'email' => 'dummy@example.org',
+            Site::PARAM_SITENAME => 'DummyName',
+            Site::PARAM_EMAIL => 'dummy@example.org',
         ];
         // When
         $site = new Site($options);
         // Then
-        $this->assertEquals($options['sitename'], $site->sitename);
-        $this->assertEquals($options['email'], $site->email);
+        $this->assertEquals($options[Site::PARAM_SITENAME], $site->sitename);
+        $this->assertEquals($options[Site::PARAM_EMAIL], $site->email);
     }
 
     public function testGetSitepath()
     {
         // Given
         $options = [
-            'siteurl' => 'http://www.example.org',
-            'sitepath' => 'bookmarks',
+            Site::PARAM_SITEURL => 'http://www.example.org',
+            Site::PARAM_SITEPATH => 'bookmarks',
         ];
         $sitePath = 'http://www.example.org/bookmarks';
         // When

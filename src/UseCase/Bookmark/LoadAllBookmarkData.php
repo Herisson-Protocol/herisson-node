@@ -5,9 +5,7 @@ namespace Herisson\UseCase\Bookmark;
 
 
 use Herisson\Service\System\BookmarkSaver;
-use Herisson\Service\System\SaverFilesystem;
 use Herisson\Service\System\SaverInterface;
-use Herisson\UseCase\Bookmark\LoadAllBookmarkDataRequest;
 use Herisson\Service\Network\BookmarkGrabber;
 use Herisson\Service\Network\GrabberInterface;
 

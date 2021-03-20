@@ -33,7 +33,7 @@ abstract class HerissonRepositoryMock
 
     public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
-
+        throw new Exception("This method has not yet been implemented");
     }
 
     public function findOneBy(array $criteria)

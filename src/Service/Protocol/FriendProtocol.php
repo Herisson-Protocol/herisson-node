@@ -184,8 +184,8 @@ class FriendProtocol extends HerissonProtocol
             case 200:
                 $jsonString = $response->getContent();
                 $json = json_decode($jsonString);
-                $friend->setEmail($json->adminEmail);
-                $friend->setName($json->sitename);
+                $friend->setEmail($json->{Site::PARAM_EMAIL});
+                $friend->setName($json->{Site::PARAM_SITENAME});
                 break;
             case 404:
                 $friend->setIsActive(false);

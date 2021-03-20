@@ -4,7 +4,6 @@
 namespace Herisson\UseCase\Bookmark;
 
 use Herisson\Entity\Bookmark;
-use Herisson\Repository\BookmarkRepository;
 use Herisson\Repository\BookmarkRepositoryInterface;
 
 class AddBookmark
@@ -13,8 +12,6 @@ class AddBookmark
 
     public function __construct(BookmarkRepositoryInterface $repository)
     {
-        //\Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository::__construct();
-        //" is type-hinted "string", you should configure its value explicitly.
         $this->repository = $repository;
     }
 

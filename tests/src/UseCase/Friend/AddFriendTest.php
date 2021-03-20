@@ -5,28 +5,20 @@ namespace Herisson\UseCase\Friend;
 
 
 use Herisson\Repository\FriendRepositoryMock;
-use PHPUnit\Framework\TestCase;
 
-class AddFriendTest extends TestCase
+class AddFriendTest extends FriendUseCaseTestClass
 {
-    public $fakeUrl = "http://www.example.org";
-    public $fakeAlias = "Example.org";
-    public $repo;
-    public function setUp() : void
-    {
-        $this->repo = new FriendRepositoryMock();
 
-    }
 
-    public function testNominal()
+    public function testExecute()
     {
         $request = new AddFriendRequest();
         $request->url = $this->fakeUrl;
         $request->alias = $this->fakeAlias;
         $response = new AddFriendResponse();
-        $usecase = new AddFriend($this->repo);
+        $usecase = new AddFriend($this->friendRepository);
         $usecase->execute($request, $response);
-        $friend = $this->repo->find($response->friendId);
+        $friend = $this->friendRepository->find($response->friendId);
         $this->assertEquals($this->fakeUrl, $friend->getUrl());
         $this->assertEquals($this->fakeAlias, $friend->getAlias());
 
