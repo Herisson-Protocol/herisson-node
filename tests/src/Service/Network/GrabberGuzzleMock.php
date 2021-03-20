@@ -13,11 +13,17 @@ class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
 {
 
     public $responses = [];
+    private $client;
 
 
     public function setResponses(array $responses)
     {
         $this->responses = $responses;
+        // Create a mock and queue two responses.
+        $mock = new MockHandler($this->responses);
+
+        $handlerStack = HandlerStack::create($mock);
+        $this->client = new Client(['handler' => $handlerStack]);
     }
 
     /**
@@ -27,25 +33,19 @@ class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
      * @param array $post the data to send via POST method
      *
      * @return Response the text content
-     *@throws NetworkException
+     //* @throws NetworkException
      */
     public function getResponse(string $url, $post = []) : Response
     {
-
-
-        // Create a mock and queue two responses.
-        $mock = new MockHandler($this->responses);
-
-        $handlerStack = HandlerStack::create($mock);
-        $client = new Client(['handler' => $handlerStack]);
+        $this->checkIsCallableOrThrowException();
 
         if (count($post)) {
-            $res = $client->request('POST', $url, [
+            $res = $this->client->request('POST', $url, [
                 'form_params' => $post,
                 'http_errors' => false
             ]);
         } else {
-            $res = $client->request('GET', $url, [
+            $res = $this->client->request('GET', $url, [
                 'http_errors' => false
             ]);
         }
@@ -59,7 +59,13 @@ class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
         $content = (string) $guzzleResponse->getBody();
 
         return new Response($content, $code, ['Content-Type' => $contentType, 'X-Url' => $url]);
-        //return new Response($url, $code, $contentType, $content);
+    }
+
+    private function checkIsCallableOrThrowException()
+    {
+        if (!$this->client) {
+            throw new \Exception("Client not set up. Have you called setResponses ?");
+        }
     }
 
     /**
@@ -72,14 +78,9 @@ class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
      */
     public function check(string $url) : Response
     {
-        // Create a mock and queue two responses.
-        $mock = new MockHandler($this->responses);
+        $this->checkIsCallableOrThrowException();
 
-        $handlerStack = HandlerStack::create($mock);
-        $client = new Client(['handler' => $handlerStack
-        ]);
-
-        $res = $client->request('HEAD', $url, [
+        $res = $this->client->request('HEAD', $url, [
             'http_errors' => false
         ]);
 

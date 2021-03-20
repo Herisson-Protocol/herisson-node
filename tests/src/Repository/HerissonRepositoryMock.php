@@ -38,7 +38,18 @@ abstract class HerissonRepositoryMock
 
     public function findOneBy(array $criteria)
     {
-
+        if (count($criteria)) {
+            $firstCriteria = key($criteria);
+            $firstValue = $criteria[$firstCriteria];
+        }
+        foreach ($this->objects as $objectData) {
+            if (isset($objectData->{$firstCriteria})) {
+                if ($objectData->{$firstCriteria} === $firstValue) {
+                    return $this->createFromData($objectData);
+                }
+            }
+        }
+        return null;
     }
 
     public function getClassName()
@@ -46,12 +57,20 @@ abstract class HerissonRepositoryMock
 
     }
 
-    public function save(HerissonEntityInterface $object)
+    public function getNextId()
+    {
+        return max(array_keys($this->objects))+1;
+    }
+
+    public function save(HerissonEntityInterface $object) : int
     {
         $objectData = [];
         foreach ($this->fields as $field) {
             $objectData[$field] = call_user_func([$object, "get".ucfirst($field)]);
         }
-        $this->objects[] = $objectData;
+        $id = $object->getId() ?: $this->getNextId();
+        $objectData['id'] = $id;
+        $this->objects[$id] = $objectData;
+        return $id;
     }
 }

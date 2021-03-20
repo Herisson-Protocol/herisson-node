@@ -4,9 +4,8 @@
 namespace Herisson\Repository;
 
 
-use Doctrine\Persistence\ObjectRepository;
 
-interface FriendRepositoryInterface extends ObjectRepository
+interface FriendRepositoryInterface extends HerissonRepositoryInterface
 {
 
 }

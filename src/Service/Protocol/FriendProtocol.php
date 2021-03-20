@@ -148,21 +148,20 @@ class FriendProtocol extends HerissonProtocol
      */
     public function reloadPublicKey(Friend $friend)
     {
-            $publicKeyUrl = $friend->getActionUrl(static::PUBLICKEY_PATH);
-            $response = $this->grabber->getResponse($publicKeyUrl);
+        $publicKeyUrl = $friend->getActionUrl(static::PUBLICKEY_PATH);
+        $response = $this->grabber->getResponse($publicKeyUrl);
 
-            $code = $response->getStatusCode();
-            switch ($code) {
-                case 200:
-                    $friend->setPublicKey($response->getContent());
-                    break;
-                case 404:
-                    $this->message->addError("This site is not a Herisson site or is closed.");
-                    break;
-                default:
-                    throw new ProtocolException("Unknown code $code");
-            }
-
+        $code = $response->getStatusCode();
+        switch ($code) {
+            case 200:
+                $friend->setPublicKey($response->getContent());
+                break;
+            case 404:
+                $this->message->addError("This site is not a Herisson site or is closed.");
+                break;
+            default:
+                throw new ProtocolException("Unknown code $code");
+        }
     }
 
 
