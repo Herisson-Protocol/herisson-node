@@ -37,6 +37,7 @@ class GrabberGuzzleMock extends AbstractGrabber implements GrabberInterface
      */
     public function getResponse(string $url, $post = []) : Response
     {
+        //error_log("Calling $url");
         $this->checkIsCallableOrThrowException();
 
         if (count($post)) {

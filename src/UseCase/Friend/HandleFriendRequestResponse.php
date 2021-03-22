@@ -4,8 +4,7 @@
 namespace Herisson\UseCase\Friend;
 
 
-class AskForFriendResponse
+class HandleFriendRequestResponse
 {
     public $httpResponse;
-    public $friendId;
 }

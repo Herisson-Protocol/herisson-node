@@ -51,4 +51,15 @@ class SiteTest extends TestCase
         $this->assertEquals("admin@example.org", $site->email);
     }
 
+    public function testCreateFromOptionRepository()
+    {
+        // Given
+        $optionRepository = new OptionRepositoryMock();
+        // When
+        $site = Site::createFromOptionRepository($optionRepository);
+        // Then
+        $this->assertEquals("HerissonSite", $site->sitename);
+        $this->assertEquals("admin@example.org", $site->email);
+    }
+
 }

@@ -4,7 +4,10 @@
 namespace Herisson\UseCase\Friend;
 
 
+use Herisson\Entity\Site;
 use Herisson\Repository\FriendRepositoryMock;
+use Herisson\Repository\OptionRepositoryMock;
+use Herisson\Service\OptionLoader;
 
 class AddFriendTest extends FriendUseCaseTestClass
 {

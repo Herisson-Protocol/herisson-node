@@ -88,7 +88,7 @@ class FriendProtocol extends HerissonProtocol
      * @throws \Herisson\Service\Encryption\EncryptionException
      * @throws \Herisson\Service\Network\NetworkException
      */
-    public function askForFriend(Site $site, Friend $friend)
+    public function askForFriend(Site $site, Friend $friend) : Response
     {
         $askUrl = $friend->getActionUrl(static::ASK_PATH);
         $mysite = $site->getFullSitepath();
@@ -101,6 +101,7 @@ class FriendProtocol extends HerissonProtocol
         $response = $this->grabber->getResponse($askUrl, $postData);
         $code = $response->getStatusCode();
 
+        //error_log("Response code : $code");
         switch ($code) {
             case 200:
                 $friend->setIsValidatedByUs(true);
@@ -121,6 +122,7 @@ class FriendProtocol extends HerissonProtocol
             default:
                 throw new ProtocolException("Unknown code $code");
         }
+        return $response;
         /*
         $dispath = [
             200 => [$this, "pendingForFriendsValidation", $friend],

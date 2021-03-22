@@ -4,6 +4,7 @@
 namespace Herisson\Entity;
 
 
+use Herisson\Repository\OptionRepositoryInterface;
 use Herisson\Service\OptionLoader;
 
 class Site
@@ -41,6 +42,11 @@ class Site
 
     }
 
+    public static function createFromOptionRepository(OptionRepositoryInterface $optionRepository)
+    {
+        return Site::createFromOptionLoader(new OptionLoader($optionRepository));
+
+    }
     public function __construct(array $options)
     {
         foreach (static::$validFields as $optionName) {

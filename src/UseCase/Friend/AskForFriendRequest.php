@@ -6,7 +6,6 @@ namespace Herisson\UseCase\Friend;
 
 class AskForFriendRequest
 {
-    public $url;
-    public $signature;
-    public $publicKey;
+    public $site;
+    public $friendId;
 }
