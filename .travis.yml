@@ -5,6 +5,7 @@ install:
   - cp .env.travis .env
   - composer install
 script:
+  - export XDEBUG_MODE=coverage
   - mkdir -p build/logs
   - composer testcifull
   - composer coveralls

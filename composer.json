@@ -103,7 +103,7 @@
         "testci": "./vendor/bin/phpunit -c phpunit.xml --colors=never  --coverage-text ",
         "testcifull": "./vendor/bin/phpunit --colors=never -c phpunit.xml  --coverage-text --coverage-html build/coverage/ --coverage-clover build/phpunit.coverage.xml --log-junit build/phpunit.report.xml ",
         "watch": "./vendor/bin/phpunit-watcher watch --colors=always --testdox ",
-        "coveralls" : "./vendor/bin/php-coveralls -x build/phpunit.coverage.xml -o build/coveralls.json"
+        "coveralls" : "./vendor/bin/php-coveralls -x build/phpunit.coverage.xml -o build/coveralls.json -v "
     },
     "conflict": {
         "symfony/symfony": "*"
