@@ -4,6 +4,7 @@ Herisson Node
 Herisson node is an open source implementation of the [Herisson protocol](http://herisson.wilkins.fr/) based on Symfony
 
 [![Build Status](https://travis-ci.org/Herisson-Protocol/herisson-node.svg?branch=main)](https://travis-ci.org/Herisson-Protocol/herisson-node)
+[![Coverage Status](https://coveralls.io/repos/github/Herisson-Protocol/herisson-node/badge.svg?branch=main)](https://coveralls.io/github/Herisson-Protocol/herisson-node?branch=main)
 
 
 * Contributors: Wilkins
