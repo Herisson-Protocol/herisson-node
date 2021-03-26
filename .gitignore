@@ -13,7 +13,6 @@
 ###> symfony/phpunit-bridge ###
 .phpunit
 .phpunit.result.cache
-/phpunit.xml
 ###< symfony/phpunit-bridge ###
 
 ###> Herisson ###
@@ -21,12 +20,12 @@ wkhtmltoimage-amd64
 wkhtmltoimage-i386
 .idea
 dump.sql
+test.sql
 run.sh
 build
 ###< Herisson ###
 
 
 ###> phpunit/phpunit ###
-/phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
