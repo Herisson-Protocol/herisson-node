@@ -5,4 +5,6 @@ install:
   - cp .env.travis .env
   - composer install
 script:
+  - mkdir -p build/logs
   - composer testcifull
+  - composer coveralls

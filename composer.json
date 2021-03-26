@@ -55,6 +55,7 @@
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
+        "php-coveralls/php-coveralls": "^2.4",
         "phpunit/phpunit": "^8.5",
         "symfony/browser-kit": "^5.2",
         "symfony/css-selector": "^5.2",
@@ -101,7 +102,8 @@
         "test": "./vendor/bin/phpunit -c phpunit.xml --colors=always",
         "testci": "./vendor/bin/phpunit -c phpunit.xml --colors=never  --coverage-text ",
         "testcifull": "./vendor/bin/phpunit --colors=never -c phpunit.xml  --coverage-text --coverage-html build/coverage/ --coverage-clover build/phpunit.coverage.xml --log-junit build/phpunit.report.xml ",
-        "watch": "./vendor/bin/phpunit-watcher watch --colors=always --testdox "
+        "watch": "./vendor/bin/phpunit-watcher watch --colors=always --testdox ",
+        "coveralls" : "./vendor/bin/php-coveralls -x build/phpunit.coverage.xml -o build/coveralls.json"
     },
     "conflict": {
         "symfony/symfony": "*"

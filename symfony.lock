@@ -132,6 +132,9 @@
     "phar-io/version": {
         "version": "3.0.4"
     },
+    "php-coveralls/php-coveralls": {
+        "version": "v2.4.3"
+    },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
     },
