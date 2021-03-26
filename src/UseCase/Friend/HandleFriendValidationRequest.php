@@ -4,10 +4,9 @@
 namespace Herisson\UseCase\Friend;
 
 
-class HandleFriendRequestRequest
+class HandleFriendValidationRequest
 {
     public $url;
     public $signature;
-//    public $publicKey;
-//    public $site;
+    //public $publicKey;
 }

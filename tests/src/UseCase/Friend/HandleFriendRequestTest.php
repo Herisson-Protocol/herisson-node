@@ -15,11 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 class HandleFriendRequestTest extends FriendUseCaseTestClass
 {
-    public function testDummy()
-    {
-        $this->assertTrue(true);
-    }
-
 
     public function testExecuteWithValidRequest()
     {

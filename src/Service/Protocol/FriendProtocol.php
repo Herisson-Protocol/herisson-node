@@ -204,10 +204,8 @@ class FriendProtocol extends HerissonProtocol
      * Validate a friend
      *
      * Do network hit to the friend's url and validate it's request
-     *
-     * @return bool true if validation was succesful, false otherwise
      */
-    public function autorizeFriendRequest(Site $site, Friend $friend)
+    public function authorizeFriendRequest(Site $site, Friend $friend) : Response
     {
         $validateUrl = $friend->getActionUrl(static::VALIDATE_PATH);
         $response = $this->grabber->getResponse($validateUrl);
@@ -225,6 +223,7 @@ class FriendProtocol extends HerissonProtocol
             default:
                 break;
         }
+        return $response;
     }
 
 

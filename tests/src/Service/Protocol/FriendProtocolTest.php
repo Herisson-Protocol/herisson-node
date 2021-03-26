@@ -98,7 +98,7 @@ cQIDAQAB
         return new Site($options);
     }
 
-    public function testAskWaitingValidation()
+    public function testAskForFriendWaitingValidation()
     {
         // Given
         $responses = [
@@ -116,7 +116,7 @@ cQIDAQAB
     }
 
 
-    public function testAskWithAutomaticValidation()
+    public function testAskForFriendWithAutomaticValidation()
     {
         // Given
         $responses = [
@@ -133,7 +133,7 @@ cQIDAQAB
         $this->assertTrue($friend->getIsActive());
     }
 
-    public function testAskWithKeyProblems()
+    public function testAskForFriendWithKeyProblems()
     {
         // Given
         $responses = [
@@ -150,7 +150,7 @@ cQIDAQAB
     }
 
 
-    public function testAutorizeFriendRequest()
+    public function testAuthorizeFriendRequest()
     {
         // Given
         $responses = [
@@ -161,7 +161,7 @@ cQIDAQAB
         $friend = new Friend();
         $friend->setIsValidatedByHim(true);
         // When
-        $friendProtocol->autorizeFriendRequest($site, $friend);
+        $friendProtocol->authorizeFriendRequest($site, $friend);
         // Then
         $this->assertTrue($friend->getIsValidatedByUs());
         $this->assertTrue($friend->getIsActive());
